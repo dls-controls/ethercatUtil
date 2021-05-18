@@ -1,0 +1,48 @@
+#==============================================================================
+# Ethercat GUI analog output channel template
+#
+# Contains channel-level PVs for a digital output module.
+#
+# Macros
+# % macro, P,        PV prefix
+# % macro, R,        PV suffix
+# % macro, CHANNEL,  Channel number
+# % macro, TYPE,     Measurement type
+# % macro, SUBTYPE,  Measurement subtype
+# % macro, PORT,     Asyn port of slave module
+# % macro, ENTRY,    Entry name for output value
+#
+#==============================================================================
+
+record(longin, "$(P):$(R):CH$(CHANNEL):CHANNEL")
+{
+    field(DESC, "Channel number")
+    field(VAL, "$(CHANNEL)")
+}
+
+record(stringin, "$(P):$(R):CH$(CHANNEL):TYPE")
+{
+    field(DESC, "Measurement type")
+    field(VAL, "$(TYPE)")
+}
+
+record(stringin, "$(P):$(R):CH$(CHANNEL):SUBTYPE")
+{
+    field(DESC, "Measurement subtype")
+    field(VAL, "$(SUBTYPE)")
+}
+
+record(bo, "$(P):$(R):CH$(CHANNEL):OUTPUT")
+{
+  field(DTYP, "asynInt32")
+  field(OUT,  "@asyn($(PORT))$(ENTRY)")
+  field(OMSL, "supervisory")
+  field(ZNAM, "OFF")
+  field(ONAM, "ON")
+}
+
+record(stringout, "$(P):$(R):CH$(CHANNEL):ALIAS") {
+    field(DESC, "Channel alias")
+    field(VAL,  "")
+    field(PINI, "YES")
+}

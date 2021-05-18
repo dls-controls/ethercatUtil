@@ -1,29 +1,22 @@
 TOP=../..
 include $(TOP)/configure/CONFIG
+
 #----------------------------------------
-#  ADD MACRO DEFINITIONS AFTER THIS LINE
+#  Template files
+#----------------------------------------
 
-#----------------------------------------------------
-#  Optimization of db files using dbst (DEFAULT: NO)
-#DB_OPT = YES
+# Module templates
+DB += ethercat_gui_analog_input_module.template
+DB += ethercat_gui_analog_output_module.template
+DB += ethercat_gui_digital_input_module.template
+DB += ethercat_gui_digital_output_module.template
+DB += ethercat_gui_power_supply_module.template
 
-#----------------------------------------------------
-# In a Diamond Support Module, install
-# templates like this
-#
-#DB += motor.template
-#DB += basic_motor.template
+# Channel templates
+DB += ethercat_gui_analog_output_channel.template
+DB += ethercat_gui_digital_output_channel.template
+DB += ethercat_gui_input_channel.template
 
-#----------------------------------------------------
-# In a Diamond IOC Application, build db files from
-# template files like this
-#
-#DB += BL06I-MO-IOC-01.db
-#DB += BL06I-MO-IOC-01_sim.db
-
-#USES_TEMPLATE += $(MOTOR)/db/motor.template
-#USES_TEMPLATE += $(MOTOR)/db/basic_motor.template
+#----------------------------------------
 
 include $(TOP)/configure/RULES
-#----------------------------------------
-#  ADD RULES AFTER THIS LINE

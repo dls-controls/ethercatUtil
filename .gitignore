@@ -4,3 +4,6 @@ db
 dbd
 include
 lib
+O.*
+iocs
+documentation

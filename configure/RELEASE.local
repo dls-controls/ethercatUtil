@@ -1,0 +1,2 @@
+ETHERCAT = $(SUPPORT)/ethercat/7-4-1
+CALC     = $(SUPPORT)/calc/3-7-3

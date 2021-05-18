@@ -1,0 +1,45 @@
+#==============================================================================
+# Ethercat GUI digital output module template
+#
+# Contains module-level PVs and GUI for the module.
+#
+# Macros
+# % macro, name,     GUI object name
+# % macro, P,        PV prefix
+# % macro, R,        PV suffix
+# % macro, POSITION, Module position
+# % macro, TYPE,     Module type
+# % macro, PORT,     Asyn port of slave module
+# % macro, SCAN,     Scan period of state
+#
+# GUI
+# % gui, $(name=), edmembed, ethercat_digital_output_4_channel.edl, P=$(P), R=$(R)
+#
+#==============================================================================
+
+record(longin, "$(P):$(R):POSITION")
+{
+    field(DESC, "Module position")
+    field(VAL, "$(POSITION)")
+}
+
+record(stringin, "$(P):$(R):MODULE_TYPE")
+{
+    field(DESC, "Module type")
+    field(VAL, "$(TYPE)")
+}
+
+record(mbbi, "$(P):$(R):STATE")
+{
+  field("DTYP", "asynInt32")
+  field("INP",  "@asyn($(PORT))AL_STATE")
+  field("SCAN", "$(SCAN)")
+  field("ONVL", "1")
+  field("TWVL", "2")
+  field("THVL", "4")
+  field("FRVL", "8")
+  field("ONST", "INIT")
+  field("TWST", "PREOP")
+  field("THST", "SAFEOP")
+  field("FRST", "OP")
+}

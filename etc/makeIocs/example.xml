@@ -1,3 +1,19 @@
 <?xml version="1.0" ?>
-<components arch="linux-x86">
+<components arch="linux-x86_64">
+	<ethercat.EthercatMaster name="ECATM" socket="/tmp/socket0"/>
+	<ethercat.EthercatSlave master="ECATM" name="ERIO.1" position="1" type_rev="EL1014 rev 0x00130000"/>
+	<ethercat.EthercatSlave master="ECATM" name="ERIO.2" position="2" type_rev="EL2124 rev 0x00100000"/>
+	<ethercat.EthercatSlave master="ECATM" name="ERIO.3" position="3" type_rev="ELM3704-0000 rev 0x00100000"/>
+	<ethercat.EthercatSlave master="ECATM" name="ERIO.4" position="4" type_rev="EL4134 rev 0x03f80000"/>
+	<ethercat.EthercatSlave master="ECATM" name="ERIO.5" position="5" type_rev="EL9505 rev 0x00100000"/>
+	<!--24V digital input module-->
+	<ethercatUtil.EL1014 P="EL1014:TEST" R="M1" name="GUI.M1" slave="ERIO.1"/>
+	<!--5V digital output module-->
+	<ethercatUtil.EL2124 P="EL2124:TEST" R="M2" name="GUI.M2" slave="ERIO.2"/>
+	<!--Multi-purpose analog input-->
+	<ethercatUtil.ELM3704 P="EL3704:TEST" R="M3" name="GUI.M3" slave="ERIO.3"/>
+	<!--+/-10V analog output-->
+	<ethercatUtil.EL4134 P="EL4134:TEST" R="M4" name="GUI.M4" slave="ERIO.4"/>
+	<!--Power supply-->
+	<ethercatUtil.EL9505 P="EL9505:TEST" R="M5" name="GUI.M5" slave="ERIO.5"/>
 </components>

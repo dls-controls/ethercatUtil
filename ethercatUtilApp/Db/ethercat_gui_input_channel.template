@@ -1,0 +1,74 @@
+#==============================================================================
+# Ethercat GUI input channel template
+#
+# Contains channel-level PVs for an input module.
+#
+# Macros
+# % macro, P,        PV prefix
+# % macro, R,        PV suffix
+# % macro, CHANNEL,  Channel number
+# % macro, TYPE,     Measurement type
+# % macro, SUBTYPE,  Measurement subtype
+# % macro, PORT,     Asyn port of slave module
+# % macro, ENTRY,    Entry name for raw value
+# % macro, SCAN,     Scan period of raw value
+#
+#==============================================================================
+
+record(longin, "$(P):$(R):CH$(CHANNEL):CHANNEL")
+{
+    field(DESC, "Channel number")
+    field(VAL, "$(CHANNEL)")
+}
+
+record(stringin, "$(P):$(R):CH$(CHANNEL):TYPE")
+{
+    field(DESC, "Measurement type")
+    field(VAL, "$(TYPE)")
+}
+
+record(stringin, "$(P):$(R):CH$(CHANNEL):SUBTYPE")
+{
+    field(DESC, "Measurement subtype")
+    field(VAL, "$(SUBTYPE)")
+}
+
+record(longin, "$(P):$(R):CH$(CHANNEL):RAW")
+{
+    field(DESC, "Raw value")
+    field(INP,  "@asyn($(PORT))$(ENTRY)")
+    field(FLNK, "$(P):$(R):CH$(CHANNEL):VAL")
+    field(SCAN, "$(SCAN)")
+}
+
+record(stringout, "$(P):$(R):CH$(CHANNEL):ALIAS")
+{
+    field(DESC, "Channel alias")
+    field(VAL,  "")
+    field(PINI, "YES")
+}
+
+record(ao, "$(P):$(R):CH$(CHANNEL):SCALE")
+{
+    field(DESC, "Scale factor")
+    field(VAL,  1)
+    field(PINI, "YES")
+    field(FLNK, "$(P):$(R):CH$(CHANNEL):VAL")
+}
+
+record(ao, "$(P):$(R):CH$(CHANNEL):OFFSET")
+{
+    field(DESC, "Offset")
+    field(VAL,  0)
+    field(PINI, "YES")
+    field(FLNK, "$(P):$(R):CH$(CHANNEL):VAL")
+}
+
+record(calc, "$(P):$(R):CH$(CHANNEL):VAL")
+{
+    field(DESC, "Scaled value")
+    field(INPA, "$(P):$(R):CH$(CHANNEL):RAW")
+    field(INPB, "$(P):$(R):CH$(CHANNEL):SCALE")
+    field(INPC, "$(P):$(R):CH$(CHANNEL):OFFSET")
+    field(CALC, "A*B+C")
+}
