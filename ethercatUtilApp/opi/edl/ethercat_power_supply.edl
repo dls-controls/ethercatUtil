@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 1353
-y 1024
+x 1357
+y 1175
 w 1135
 h 105
 font "arial-medium-r-12.0"
@@ -93,7 +93,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 655
+x 685
 y 30
 w 60
 h 20
@@ -112,7 +112,7 @@ beginObjectProperties
 major 4
 minor 1
 release 1
-x 755
+x 800
 y 30
 w 60
 h 20
@@ -131,10 +131,10 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 720
+x 750
 y 30
-w 20
-h 20
+w 19
+h 19
 controlPv "$(P):$(R):POWER_OK"
 lineColor index 14
 onColor index 15
@@ -148,10 +148,10 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 815
+x 865
 y 30
-w 20
-h 20
+w 19
+h 19
 controlPv "$(P):$(R):OVERLOAD"
 lineColor index 14
 onColor index 20
@@ -165,7 +165,7 @@ beginObjectProperties
 major 4
 minor 6
 release 0
-x 525
+x 520
 y 30
 w 120
 h 20
@@ -186,7 +186,7 @@ beginObjectProperties
 major 4
 minor 6
 release 0
-x 400
+x 395
 y 30
 w 120
 h 20
@@ -207,7 +207,7 @@ beginObjectProperties
 major 10
 minor 0
 release 0
-x 235
+x 230
 y 30
 w 155
 h 20

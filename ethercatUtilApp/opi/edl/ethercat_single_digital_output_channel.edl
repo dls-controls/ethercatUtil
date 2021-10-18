@@ -4,7 +4,7 @@ major 4
 minor 0
 release 1
 x 945
-y 797
+y 908
 w 930
 h 20
 font "arial-medium-r-12.0"
@@ -114,13 +114,32 @@ minor 0
 release 0
 x 455
 y 0
-w 80
+w 120
 h 20
 fgColor index 25
 bgColor index 3
 inconsistentColor index 79
 topShadowColor index 1
 botShadowColor index 11
+controlPv "$(P):$(R):CH$(CHANNEL):OUTPUT"
+indicatorPv "$(P):$(R):CH$(CHANNEL):OUTPUT:RBV"
 font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Byte)
+object ByteClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 585
+y 0
+w 19
+h 19
+controlPv "$(P):$(R):CH$(CHANNEL):OUTPUT:RBV"
+lineColor index 14
+onColor index 15
+offColor index 19
+numBits 1
 endObjectProperties
 

@@ -20,6 +20,13 @@ record(longin, "$(P):$(R):CH$(CHANNEL):CHANNEL")
     field(VAL, "$(CHANNEL)")
 }
 
+record(stringout, "$(P):$(R):CH$(CHANNEL):ALIAS")
+{
+    field(DESC, "Channel alias")
+    field(VAL,  "")
+    field(PINI, "YES")
+}
+
 record(stringin, "$(P):$(R):CH$(CHANNEL):TYPE")
 {
     field(DESC, "Measurement type")
@@ -41,8 +48,11 @@ record(bo, "$(P):$(R):CH$(CHANNEL):OUTPUT")
   field(ONAM, "ON")
 }
 
-record(stringout, "$(P):$(R):CH$(CHANNEL):ALIAS") {
-    field(DESC, "Channel alias")
-    field(VAL,  "")
-    field(PINI, "YES")
+record(bi, "$(P):$(R):CH$(CHANNEL):OUTPUT:RBV")
+{
+  field(DTYP, "asynInt32")
+  field(INP,  "@asyn($(PORT))$(ENTRY)")
+  field(ZNAM, "OFF")
+  field(ONAM, "ON")
+  field(SCAN, "1 second")
 }
