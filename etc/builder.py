@@ -65,7 +65,8 @@ class _EthercatGuiAnalogOutputChannelTemplate(AutoSubstitution):
 #==============================================================================
 
 class EthercatSlaveGui(Device):
-    ''' Generic top-level class for creating GUI for reading channel values for a slave
+    '''
+    Generic top-level class for creating GUI for reading channel values for a slave
     module.
     '''
 
@@ -318,6 +319,24 @@ class EL2124(DigitalOutputModule):
             value_entry="Channel{ch}.Output",
             measurement_type="Digital output",
             measurement_subtype="5V",
+            SCAN=SCAN
+        )
+
+    ArgInfo = makeArgInfo(__init__, **base_arginfo_args)
+
+
+class EL2624(DigitalOutputModule):
+    ''' GUI for EL2624 125V AC / 30V DC relay output module '''
+
+    def __init__(self, name, slave, P, R, SCAN="1 second"):
+        self.__super.__init__(
+            name,
+            slave,
+            P,
+            R,
+            value_entry="Channel{ch}.Output",
+            measurement_type="Relay output",
+            measurement_subtype="125V AC / 30V DC",
             SCAN=SCAN
         )
 
