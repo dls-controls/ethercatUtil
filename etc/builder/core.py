@@ -17,6 +17,7 @@ scan_periods = [
     "10 second"
 ]
 
+
 base_arginfo_args = {
     "name": Simple("Object name", str),
     "slave": Ident("Slave module", EthercatSlave),
@@ -33,14 +34,18 @@ base_arginfo_args = {
 class _EthercatGuiDigitalInputModuleTemplate(AutoSubstitution):
     TemplateFile = "ethercat_gui_digital_input_module.template"
 
+
 class _EthercatGuiDigitalOutputModuleTemplate(AutoSubstitution):
     TemplateFile = "ethercat_gui_digital_output_module.template"
+
 
 class _EthercatGuiAnalogInputModuleTemplate(AutoSubstitution):
     TemplateFile = "ethercat_gui_analog_input_module.template"
 
+
 class _EthercatGuiAnalogOutputModuleTemplate(AutoSubstitution):
     TemplateFile = "ethercat_gui_analog_output_module.template"
+
 
 class _EthercatPowerSupplyModuleTemplate(AutoSubstitution):
     TemplateFile = "ethercat_gui_power_supply_module.template"
@@ -53,8 +58,10 @@ class _EthercatPowerSupplyModuleTemplate(AutoSubstitution):
 class _EthercatGuiInputChannelTemplate(AutoSubstitution):
     TemplateFile = "ethercat_gui_input_channel.template"
 
+
 class _EthercatGuiDigitalOutputChannelTemplate(AutoSubstitution):
     TemplateFile = "ethercat_gui_digital_output_channel.template"
+
 
 class _EthercatGuiAnalogOutputChannelTemplate(AutoSubstitution):
     TemplateFile = "ethercat_gui_analog_output_channel.template"
