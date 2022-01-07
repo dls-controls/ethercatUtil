@@ -54,3 +54,4 @@ fixed-purpose module:
 * Create CSS screens
 * Add optional logic for copying scale and offset values to an AreaDetector scale plugin
 * Add documentation
+* Add change log

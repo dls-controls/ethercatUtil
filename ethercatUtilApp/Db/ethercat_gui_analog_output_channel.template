@@ -35,13 +35,13 @@ record(stringout, "$(P):$(R):CH$(CHANNEL):ALIAS")
 record(stringin, "$(P):$(R):CH$(CHANNEL):TYPE")
 {
     field(DESC, "Measurement type")
-    field(VAL, "$(TYPE)")
+    field(VAL,  "$(TYPE)")
 }
 
 record(stringin, "$(P):$(R):CH$(CHANNEL):SUBTYPE")
 {
     field(DESC, "Measurement subtype")
-    field(VAL, "$(SUBTYPE)")
+    field(VAL,  "$(SUBTYPE)")
 }
 
 record(ao, "$(P):$(R):CH$(CHANNEL):OUTPUT")
@@ -69,8 +69,6 @@ record(ai, "$(P):$(R):CH$(CHANNEL):OUTPUT:RBV")
     field(LINR, "LINEAR")
     field(EGUF, "$(EGUF)")
     field(EGUL, "$(EGUL)")
-    field(DRVH, "$(DRVH)")
-    field(DRVL, "$(DRVL)")
     field(EGU,  "$(EGU)")
     field(PREC, "3")
     field(SCAN, "1 second")

@@ -23,28 +23,28 @@
 record(longin, "$(P):$(R):POSITION")
 {
     field(DESC, "Module position")
-    field(VAL, "$(POSITION)")
+    field(VAL,  "$(POSITION)")
 }
 
 record(stringin, "$(P):$(R):MODULE_TYPE")
 {
     field(DESC, "Module type")
-    field(VAL, "$(TYPE)")
+    field(VAL,  "$(TYPE)")
 }
 
 record(mbbi, "$(P):$(R):STATE")
 {
-  field("DTYP", "asynInt32")
-  field("INP",  "@asyn($(PORT))AL_STATE")
-  field("SCAN", "$(SCAN)")
-  field("ONVL", "1")
-  field("TWVL", "2")
-  field("THVL", "4")
-  field("FRVL", "8")
-  field("ONST", "INIT")
-  field("TWST", "PREOP")
-  field("THST", "SAFEOP")
-  field("FRST", "OP")
+  field(DTYP, "asynInt32")
+  field(INP,  "@asyn($(PORT))AL_STATE")
+  field(SCAN, "$(SCAN)")
+  field(ONVL, "1")
+  field(TWVL, "2")
+  field(THVL, "4")
+  field(FRVL, "8")
+  field(ONST, "INIT")
+  field(TWST, "PREOP")
+  field(THST, "SAFEOP")
+  field(FRST, "OP")
 }
 
 record(stringout, "$(P):$(R):ALIAS")
@@ -57,29 +57,29 @@ record(stringout, "$(P):$(R):ALIAS")
 record(stringin, "$(P):$(R):TYPE")
 {
     field(DESC, "Measurement type")
-    field(VAL, "Power supply")
+    field(VAL,  "Power supply")
 }
 
 record(stringin, "$(P):$(R):SUBTYPE")
 {
     field(DESC, "Measurement subtype")
-    field(VAL, "$(SUBTYPE)")
+    field(VAL,  "$(SUBTYPE)")
 }
 
 record(bi, "$(P):$(R):POWER_OK")
 {
-  field("DTYP", "asynInt32")
-  field("INP",  "@asyn($(PORT))$(POWER_OK)")
-  field("SCAN", "$(SCAN)")
-  field("ZNAM", "OFF")
-  field("ONAM", "ON")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT))$(POWER_OK)")
+    field(SCAN, "$(SCAN)")
+    field(ZNAM, "OFF")
+    field(ONAM, "ON")
 }
 
 record(bi, "$(P):$(R):OVERLOAD")
 {
-  field("DTYP", "asynInt32")
-  field("INP",  "@asyn($(PORT))$(OVERLOAD)")
-  field("SCAN", "$(SCAN)")
-  field("ZNAM", "OFF")
-  field("ONAM", "ON")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT))$(OVERLOAD)")
+    field(SCAN, "$(SCAN)")
+    field(ZNAM, "OFF")
+    field(ONAM, "ON")
 }

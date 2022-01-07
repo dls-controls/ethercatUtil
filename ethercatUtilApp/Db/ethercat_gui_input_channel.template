@@ -36,7 +36,7 @@ record(stringin, "$(P):$(R):CH$(CHANNEL):SUBTYPE")
 record(longin, "$(P):$(R):CH$(CHANNEL):RAW")
 {
     field(DESC, "Raw value")
-    field("DTYP", "asynInt32")
+    field(DTYP, "asynInt32")
     field(INP,  "@asyn($(PORT))$(ENTRY)")
     field(FLNK, "$(P):$(R):CH$(CHANNEL):VAL")
     field(SCAN, "$(SCAN)")

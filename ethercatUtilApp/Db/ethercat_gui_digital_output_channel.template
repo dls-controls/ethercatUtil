@@ -17,7 +17,7 @@
 record(longin, "$(P):$(R):CH$(CHANNEL):CHANNEL")
 {
     field(DESC, "Channel number")
-    field(VAL, "$(CHANNEL)")
+    field(VAL,  "$(CHANNEL)")
 }
 
 record(stringout, "$(P):$(R):CH$(CHANNEL):ALIAS")
@@ -30,29 +30,29 @@ record(stringout, "$(P):$(R):CH$(CHANNEL):ALIAS")
 record(stringin, "$(P):$(R):CH$(CHANNEL):TYPE")
 {
     field(DESC, "Measurement type")
-    field(VAL, "$(TYPE)")
+    field(VAL,  "$(TYPE)")
 }
 
 record(stringin, "$(P):$(R):CH$(CHANNEL):SUBTYPE")
 {
     field(DESC, "Measurement subtype")
-    field(VAL, "$(SUBTYPE)")
+    field(VAL,  "$(SUBTYPE)")
 }
 
 record(bo, "$(P):$(R):CH$(CHANNEL):OUTPUT")
 {
-  field(DTYP, "asynInt32")
-  field(OUT,  "@asyn($(PORT))$(ENTRY)")
-  field(OMSL, "supervisory")
-  field(ZNAM, "OFF")
-  field(ONAM, "ON")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(PORT))$(ENTRY)")
+    field(OMSL, "supervisory")
+    field(ZNAM, "OFF")
+    field(ONAM, "ON")
 }
 
 record(bi, "$(P):$(R):CH$(CHANNEL):OUTPUT:RBV")
 {
-  field(DTYP, "asynInt32")
-  field(INP,  "@asyn($(PORT))$(ENTRY)")
-  field(ZNAM, "OFF")
-  field(ONAM, "ON")
-  field(SCAN, "1 second")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(PORT))$(ENTRY)")
+    field(ZNAM, "OFF")
+    field(ONAM, "ON")
+    field(SCAN, "1 second")
 }
