@@ -64,7 +64,7 @@ class _EthercatGuiAnalogOutputChannelTemplate(AutoSubstitution):
 # Base module class
 #==============================================================================
 
-class EthercatSlaveGui(Device):
+class EthercatSlaveModule(Device):
     '''
     Generic top-level class for creating GUI for reading channel values for a slave
     module.
@@ -143,7 +143,7 @@ class EthercatSlaveGui(Device):
 # Base module type classes
 #==============================================================================
 
-class DigitalInputModule(EthercatSlaveGui):
+class DigitalInputModule(EthercatSlaveModule):
 
     def make_module_template(self):
         _EthercatGuiDigitalInputModuleTemplate(
@@ -169,7 +169,7 @@ class DigitalInputModule(EthercatSlaveGui):
         )
 
 
-class DigitalOutputModule(EthercatSlaveGui):
+class DigitalOutputModule(EthercatSlaveModule):
 
     def make_module_template(self):
         _EthercatGuiDigitalOutputModuleTemplate(
@@ -194,7 +194,7 @@ class DigitalOutputModule(EthercatSlaveGui):
         )
 
 
-class AnalogInputModule(EthercatSlaveGui):
+class AnalogInputModule(EthercatSlaveModule):
 
     def make_module_template(self):
         _EthercatGuiAnalogInputModuleTemplate(
@@ -220,7 +220,7 @@ class AnalogInputModule(EthercatSlaveGui):
         )
 
 
-class AnalogOutputModule(EthercatSlaveGui):
+class AnalogOutputModule(EthercatSlaveModule):
 
     def make_module_template(self):
         _EthercatGuiAnalogOutputModuleTemplate(
@@ -250,7 +250,7 @@ class AnalogOutputModule(EthercatSlaveGui):
         )
 
 
-class PowerSupplyModule(EthercatSlaveGui):
+class PowerSupplyModule(EthercatSlaveModule):
 
     def make_module_template(self):
         _EthercatPowerSupplyModuleTemplate(
@@ -265,134 +265,3 @@ class PowerSupplyModule(EthercatSlaveGui):
             POWER_OK="StatusUo.PowerOK",
             OVERLOAD="StatusUo.Overload"
         )
-
-
-#==============================================================================
-# Modules (to be moved)
-#==============================================================================
-
-class EL1014(DigitalInputModule):
-    ''' GUI for EL1014 24V digital input module '''
-
-    def __init__(self, name, slave, P, R, SCAN="1 second"):
-        self.__super.__init__(
-            name,
-            slave,
-            P,
-            R,
-            value_entry="Channel{ch}.Input",
-            measurement_type="Digital input",
-            measurement_subtype="24V",
-            SCAN=SCAN
-        )
-
-    ArgInfo = makeArgInfo(__init__, **base_arginfo_args)
-
-
-class EL1124(DigitalInputModule):
-    ''' GUI for EL1124 5V digital input module '''
-
-    def __init__(self, name, slave, P, R, SCAN="1 second"):
-        self.__super.__init__(
-            name,
-            slave,
-            P,
-            R,
-            value_entry="Channel{ch}.Input",
-            measurement_type="Digital input",
-            measurement_subtype="5V",
-            SCAN=SCAN
-        )
-
-    ArgInfo = makeArgInfo(__init__, **base_arginfo_args)
-
-
-class EL2124(DigitalOutputModule):
-    ''' GUI for EL2124 5V digital output module '''
-
-    def __init__(self, name, slave, P, R, SCAN="1 second"):
-        self.__super.__init__(
-            name,
-            slave,
-            P,
-            R,
-            value_entry="Channel{ch}.Output",
-            measurement_type="Digital output",
-            measurement_subtype="5V",
-            SCAN=SCAN
-        )
-
-    ArgInfo = makeArgInfo(__init__, **base_arginfo_args)
-
-
-class EL2624(DigitalOutputModule):
-    ''' GUI for EL2624 125V AC / 30V DC relay output module '''
-
-    def __init__(self, name, slave, P, R, SCAN="1 second"):
-        self.__super.__init__(
-            name,
-            slave,
-            P,
-            R,
-            value_entry="Channel{ch}.Output",
-            measurement_type="Relay output",
-            measurement_subtype="125V AC / 30V DC",
-            SCAN=SCAN
-        )
-
-    ArgInfo = makeArgInfo(__init__, **base_arginfo_args)
-
-
-class EL4134(AnalogOutputModule):
-    ''' GUI for EL4134 analog output module '''
-
-    def __init__(self, name, slave, P, R, SCAN="1 second"):
-        self.__super.__init__(
-            name,
-            slave,
-            P,
-            R,
-            value_entry="AOOutputChannel{ch}.Analogoutput",
-            measurement_type="Analog output",
-            measurement_subtype="+/-10V",
-            SCAN=SCAN
-        )
-
-    ArgInfo = makeArgInfo(__init__, **base_arginfo_args)
-
-
-class EL9505(PowerSupplyModule):
-    ''' GUI for EL9505 power supply module '''
-
-    def __init__(self, name, slave, P, R, SCAN="1 second"):
-        self.__super.__init__(
-            name,
-            slave,
-            P,
-            R,
-            channels=0,
-            value_entry=None,
-            measurement_type="Power supply",
-            measurement_subtype="5V DC",
-            SCAN=SCAN
-        )
-
-    ArgInfo = makeArgInfo(__init__, **base_arginfo_args)
-
-
-class ELM3704(AnalogInputModule):
-    ''' GUI for ELM3704 multi-purpose analog input module '''
-
-    def __init__(self, name, slave, P, R, SCAN="1 second"):
-        self.__super.__init__(
-            name,
-            slave,
-            P,
-            R,
-            value_entry="PAISamples1Channel{ch}.Samples__ARRAY[0]",
-            measurement_type="Multi-purpose input",
-            measurement_subtype="Unknown",
-            SCAN=SCAN
-        )
-
-    ArgInfo = makeArgInfo(__init__, **base_arginfo_args)
