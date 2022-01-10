@@ -4,7 +4,7 @@ major 4
 minor 0
 release 1
 x 648
-y 402
+y 439
 w 1135
 h 105
 font "arial-medium-r-12.0"
@@ -39,17 +39,20 @@ bgColor index 0
 topShadowColor index 0
 botShadowColor index 14
 displaySource "menu"
-filePv "LOC\\enumPV=e:0"
+filePv "$(P):$(R):CH1:LOADED"
 sizeOfs 5
-numDsps 1
+numDsps 2
 displayFileName {
   0 "ethercat_single_ELM3704_channel.edl"
+  1 "ethercat_single_ELM3704_channel.edl"
 }
 menuLabel {
-  0 "SingleChannelDefault"
+  0 "SingleChannelELM3704"
+  1 "SingleChannelELM3704"
 }
 symbols {
   0 "P=$(P), R=$(R), CHANNEL=1"
+  1 "P=$(P), R=$(R), CHANNEL=1"
 }
 replaceSymbols {
   0 1
@@ -138,17 +141,20 @@ bgColor index 0
 topShadowColor index 0
 botShadowColor index 14
 displaySource "menu"
-filePv "LOC\\enumPV=e:0"
+filePv "$(P):$(R):CH2:LOADED"
 sizeOfs 5
-numDsps 1
+numDsps 2
 displayFileName {
   0 "ethercat_single_ELM3704_channel.edl"
+  1 "ethercat_single_ELM3704_channel.edl"
 }
 menuLabel {
-  0 "SingleChannelDefault"
+  0 "SingleChannelELM3704"
+  1 "SingleChannelELM3704"
 }
 symbols {
   0 "P=$(P), R=$(R), CHANNEL=2"
+  1 "P=$(P), R=$(R), CHANNEL=2"
 }
 replaceSymbols {
   0 1
@@ -174,17 +180,20 @@ bgColor index 0
 topShadowColor index 0
 botShadowColor index 14
 displaySource "menu"
-filePv "LOC\\enumPV=e:0"
+filePv "$(P):$(R):CH3:LOADED"
 sizeOfs 5
-numDsps 1
+numDsps 2
 displayFileName {
   0 "ethercat_single_ELM3704_channel.edl"
+  1 "ethercat_single_ELM3704_channel.edl"
 }
 menuLabel {
-  0 "SingleChannelDefault"
+  0 "SingleChannelELM3704"
+  1 "SingleChannelELM3704"
 }
 symbols {
   0 "P=$(P), R=$(R), CHANNEL=3"
+  1 "P=$(P), R=$(R), CHANNEL=3"
 }
 replaceSymbols {
   0 1
@@ -210,17 +219,20 @@ bgColor index 0
 topShadowColor index 0
 botShadowColor index 14
 displaySource "menu"
-filePv "LOC\\enumPV=e:0"
+filePv "$(P):$(R):CH4:LOADED"
 sizeOfs 5
-numDsps 1
+numDsps 2
 displayFileName {
   0 "ethercat_single_ELM3704_channel.edl"
+  1 "ethercat_single_ELM3704_channel.edl"
 }
 menuLabel {
-  0 "SingleChannelDefault"
+  0 "SingleChannelELM3704"
+  1 "SingleChannelELM3704"
 }
 symbols {
   0 "P=$(P), R=$(R), CHANNEL=4"
+  1 "P=$(P), R=$(R), CHANNEL=4"
 }
 replaceSymbols {
   0 1

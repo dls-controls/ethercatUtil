@@ -22,6 +22,17 @@ record(longin, "$(P):$(R):CH$(CHANNEL):CHANNEL")
     field(VAL,  "$(CHANNEL)")
 }
 
+record(bi, "$(P):$(R):CH$(CHANNEL):LOADED")
+{
+    field(DESC, "Whether the type has been applied")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(LOGICPORT),0) CH$(CHANNEL):LOADED")
+    field(SCAN, "I/O Intr")
+    field(VAL,  "0")
+    field(ZNAM, "Yes")
+    field(ONAM, "No")
+}
+
 record(mbbo, "$(P):$(R):CH$(CHANNEL):TYPE")
 {
     field(DESC, "Measurement type")
@@ -74,6 +85,7 @@ record(mbbo, "$(P):$(R):CH$(CHANNEL):SUBTYPE")
     field(FTVL, "14")
     field(FTVL, "15")
     field(ZRST, "None")
+    info(asyn:READBACK, "1")
 }
 
 record(mbbi, "$(P):$(R):CH$(CHANNEL):SUBTYPE_RBV")

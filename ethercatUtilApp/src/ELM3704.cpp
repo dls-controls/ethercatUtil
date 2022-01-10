@@ -12,15 +12,15 @@ static const char *driverName = "ELM3704";
 ELM3704::ELM3704(const char* portName) : asynPortDriver(
     portName,  /* asyn port name */
     1, /* maxAddr */
-    asynInt32Mask | asynDrvUserMask, /* Interface mask */
-    asynInt32Mask,  /* Interrupt mask */
+    asynInt32Mask | asynEnumMask  | asynDrvUserMask, /* Interface mask */
+    asynInt32Mask | asynEnumMask,  /* Interrupt mask */
     0, /* asynFlags.  This driver does not block and it is not multi-device, so flag is 0 */
     1, /* Autoconnect */
     0, /* Default priority */
     0) /* Default stack size*/
 {
 
-    /* Parameter creation */
+    /* Asyn parameter creation */
 
     // For each channel
     static const int NBUFF = 255;
@@ -32,7 +32,51 @@ ELM3704::ELM3704(const char* portName) : asynPortDriver(
         // Measurement subtype
         epicsSnprintf(str, NBUFF, "CH%d:SUBTYPE", ch+1);
         createParam(str, asynParamInt32, &measurementSubType[ch]);
+        // Measurement type is loaded
+        epicsSnprintf(str, NBUFF, "CH%d:LOADED", ch+1);
+        createParam(str, asynParamInt32, &measurementTypeLoaded[ch]);
     }
+}
+
+
+// Write voltage strings and values of measurement subtype MBBI/MBBO records
+void ELM3704::writeVoltageStrings(const unsigned int &channel)
+{
+    static const char *voltageRangeStrings[12] = {
+        "+/- 60V",
+        "+/- 10V",
+        "+/- 5V",
+        "+/- 2.5V",
+        "+/- 1.25V",
+        "+/- 640mV",
+        "+/- 320mV",
+        "+/- 160mV",
+        "+/- 80mV",
+        "+/- 40mV",
+        "+/- 20mV",
+        "+/- 0..10V",
+    };
+    // Map values based to the corresponding 0x80n01:01 interface value
+    static int voltageRangeValues[12] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14 };
+    static int voltageRangeSeverities[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    // Set subtype parameter to first possible value
+    setIntegerParam(measurementSubType[channel], 1);
+    // Update strings and values
+    doCallbacksEnum((char **)voltageRangeStrings, voltageRangeValues, voltageRangeSeverities, 12, measurementSubType[channel], 0);
+}
+
+
+// Empty out strings and values of measurement subtype MBBI/MBBO records
+void ELM3704::writeNoneStrings(const unsigned int &channel)
+{
+    static const char *noneRangeStrings[1] = { "None" };
+    // Map values based to the corresponding 0x80n01:01 interface value
+    static int noneRangeValues[1] = { 0 };
+    static int noneRangeSeverities[1] = { 0 };
+    // Set subtype parameter to first possible value
+    setIntegerParam(measurementSubType[channel], 0);
+    // Update strings and values
+    doCallbacksEnum((char **)noneRangeStrings, noneRangeValues, noneRangeSeverities, 1, measurementSubType[channel], 0);
 }
 
 
@@ -48,15 +92,34 @@ asynStatus ELM3704::writeInt32(asynUser *pasynUser, epicsInt32 value)
     // Updated parameter
     const int param = pasynUser->reason;
 
-    printf("writeInt32 called for parameter %d and value %d\n", param, value);
+    printf("writeInt32 called - parameter: %d, value: %d\n", param, value);
 
     // Check if the parameter is handled directly in this subclass
     bool handled = false;
-    for (int i=0; i<4; i++)
+    for (unsigned int i=0; i<4; i++)
     {
         if (param == measurementType[i])
         {
-            printf("Channel %d measurement type changed to %d\n", i, value);
+            // Set the loaded parameter to loading
+            setIntegerParam(measurementTypeLoaded[i], 1);
+            callParamCallbacks();
+
+            // Update the mbbi/mbbo strings
+            if (value == 0)
+            {
+                printf("Channel %d measurement type changed to None\n");
+                writeNoneStrings(i);
+            }
+            if (value == 1)
+            {
+                printf("Channel %d measurement type changed to Voltage\n");
+                writeVoltageStrings(i);
+            }
+
+            // Set the loaded parameter to done
+            setIntegerParam(measurementTypeLoaded[i], 0);
+
+            // Finish updating parameter
             handled = true;
             status = asynPortDriver::writeInt32(pasynUser, value);
             break;

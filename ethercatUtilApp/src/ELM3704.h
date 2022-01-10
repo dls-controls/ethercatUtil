@@ -25,9 +25,15 @@ public:
     virtual asynStatus writeInt32(asynUser *pasynUser, epicsInt32 value);
 
 protected:
-    // Channel parameter indices
+    // Channel asyn parameter indices
     int measurementType[4];
     int measurementSubType[4];
+    int measurementTypeLoaded[4];
+
+private:
+    // Methods
+    void writeVoltageStrings(const unsigned int &channel);
+    void writeNoneStrings(const unsigned int &channel);
 
 };
 
