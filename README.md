@@ -55,3 +55,4 @@ fixed-purpose module:
 * Add optional logic for copying scale and offset values to an AreaDetector scale plugin
 * Add documentation
 * Add change log
+* Autosave aliases and settings
