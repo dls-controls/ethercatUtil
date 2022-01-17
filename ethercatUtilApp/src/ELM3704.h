@@ -47,11 +47,15 @@ protected:
     };
 
 private:
-    // Methods
-    void writeVoltageStrings(const unsigned int &channel);
-    void writeNoneStrings(const unsigned int &channel);
+    // Methods for updating the MBBI/O subtype options
+    void writeNoneSubTypeOptions(const unsigned int &channel);
+    void writeVoltageSubTypeOptions(const unsigned int &channel);
+    void writeCurrentSubTypeOptions(const unsigned int &channel);
+
 
     asynStatus setChannelInterface(const unsigned int &channel, const unsigned int &value);
+    bool checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &value);
+    bool checkIfMeasurementSubTypeChanged(const int &param, const epicsInt32 &value);
 
     // Variables
     asynPortClient sdoPortClient;

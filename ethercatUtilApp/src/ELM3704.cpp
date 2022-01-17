@@ -41,44 +41,8 @@ ELM3704::ELM3704(const char* portName, const char* sdoPortName) : asynPortDriver
 }
 
 
-// Write voltage strings and values of measurement subtype MBBI/MBBO records
-void ELM3704::writeVoltageStrings(const unsigned int &channel)
-{
-    static const char *voltageRangeStrings[12] = {
-        "+/- 60V",
-        "+/- 10V",
-        "+/- 5V",
-        "+/- 2.5V",
-        "+/- 1.25V",
-        "+/- 640mV",
-        "+/- 320mV",
-        "+/- 160mV",
-        "+/- 80mV",
-        "+/- 40mV",
-        "+/- 20mV",
-        "+/- 0..10V",
-    };
-    // Map values based to the corresponding 0x80n01:01 interface value
-    static int voltageRangeValues[12] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14 };
-    static int voltageRangeSeverities[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-    // Set subtype parameter to first possible value
-    setIntegerParam(measurementSubType[channel], voltageRangeValues[0]);
-    // Write first value to interface parameter of client SDO port
-    setChannelInterface(channel, voltageRangeValues[0]);
-    // Update strings and values
-    doCallbacksEnum(
-        (char **)voltageRangeStrings,
-        voltageRangeValues,
-        voltageRangeSeverities,
-        12,
-        measurementSubType[channel],
-        0
-    );
-}
-
-
-// Empty out strings and values of measurement subtype MBBI/MBBO records
-void ELM3704::writeNoneStrings(const unsigned int &channel)
+// Empty the subtype options list
+void ELM3704::writeNoneSubTypeOptions(const unsigned int &channel)
 {
     static const char *noneRangeStrings[1] = { "None" };
     // Map values based to the corresponding 0x80n01:01 interface value
@@ -100,6 +64,71 @@ void ELM3704::writeNoneStrings(const unsigned int &channel)
 }
 
 
+// Write the voltage subtype options
+void ELM3704::writeVoltageSubTypeOptions(const unsigned int &channel)
+{
+    static const char *voltageRangeStrings[13] = {
+        "+/- 60V",
+        "+/- 10V",
+        "+/- 5V",
+        "+/- 2.5V",
+        "+/- 1.25V",
+        "+/- 640mV",
+        "+/- 320mV",
+        "+/- 160mV",
+        "+/- 80mV",
+        "+/- 40mV",
+        "+/- 20mV",
+        "0-10V",
+        "0-5V",
+    };
+    // Map values based to the corresponding 0x80n01:01 interface value
+    static int voltageRangeValues[13] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15 };
+    static int voltageRangeSeverities[13] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    // Set subtype parameter to first possible value
+    setIntegerParam(measurementSubType[channel], voltageRangeValues[0]);
+    // Write first value to interface parameter of client SDO port
+    setChannelInterface(channel, voltageRangeValues[0]);
+    // Update strings and values
+    doCallbacksEnum(
+        (char **)voltageRangeStrings,
+        voltageRangeValues,
+        voltageRangeSeverities,
+        13,
+        measurementSubType[channel],
+        0
+    );
+}
+
+
+// Write current subtype options
+void ELM3704::writeCurrentSubTypeOptions(const unsigned int &channel)
+{
+    static const char *currentRangeStrings[4] = {
+        "+/- 20mA",
+        "0-20mA",
+        "4-20mA",
+        "4-20mA NAMUR",
+    };
+    // Map values based to the corresponding 0x80n01:01 interface value
+    static int currentRangeValues[4] = { 17, 18, 19, 20 };
+    static int currentRangeSeverities[4] = { 0, 0, 0, 0 };
+    // Set subtype parameter to first possible value
+    setIntegerParam(measurementSubType[channel], currentRangeValues[0]);
+    // Write first value to interface parameter of client SDO port
+    setChannelInterface(channel, currentRangeValues[0]);
+    // Update strings and values
+    doCallbacksEnum(
+        (char **)currentRangeStrings,
+        currentRangeValues,
+        currentRangeSeverities,
+        4,
+        measurementSubType[channel],
+        0
+    );
+}
+
+
 // Change the Interface value of a channel via the asynPortClient
 asynStatus ELM3704::setChannelInterface(const unsigned int &channel, const unsigned int &value)
 {
@@ -107,6 +136,98 @@ asynStatus ELM3704::setChannelInterface(const unsigned int &channel, const unsig
     std::string interface_string = "CH" + std::to_string(channel+1) + ":Interface";
     printf("Setting channel %d interface via param %s to %d\n", channel+1, interface_string.c_str(), value);
     return sdoPortClient.write(interface_string, (epicsInt32) value);
+}
+
+
+// Check and handle changes to the measurement type
+bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &value)
+{
+    bool measurementTypeChanged = false;
+    for (unsigned int ch=0; ch<4; ch++)
+    {
+        if (param == measurementType[ch])
+        {
+            // Set the loaded parameter to loading for GUI update
+            setIntegerParam(measurementTypeLoaded[ch], 1);
+            // Force the load
+            callParamCallbacks();
+
+            // Update measurement subtype strings and values based on input value
+            switch (value)
+            {
+                case Type::None:
+                    printf("Channel %d measurement type changed to None\n", ch);
+                    writeNoneSubTypeOptions(ch);
+                    break;
+
+                case Type::Voltage:
+                    printf("Channel %d measurement type changed to Voltage\n", ch);
+                    writeVoltageSubTypeOptions(ch);
+                    break;
+
+                case Type::Current:
+                    printf("Channel %d measurement type changed to Current\n", ch);
+                    writeCurrentSubTypeOptions(ch);
+                    break;
+
+                default:
+                    printf("Channel %d measurement type changed to unimplemented type %d\n", ch, value);
+                    writeNoneSubTypeOptions(ch);
+                    break;
+            }
+
+            // Set the loaded parameter to done
+            setIntegerParam(measurementTypeLoaded[ch], 0);
+
+            // Signal that it was the type that changed
+            measurementTypeChanged = true;
+
+            // Break out of the channel loop
+            break;
+        }
+    }
+    return measurementTypeChanged;
+}
+
+
+// Check and handle changes to the measurement subtype
+bool ELM3704::checkIfMeasurementSubTypeChanged(const int &param, const epicsInt32 &value)
+{
+    bool measurementSubTypeChanged = false;
+    for (unsigned int ch=0; ch<4; ch++)
+    {
+        if (param == measurementSubType[ch])
+        {
+            // Get current measurement type to determine actions to take
+            epicsInt32 type;
+            getIntegerParam(measurementType[ch], &type);
+            switch(type)
+            {
+                case Type::Voltage:
+                    printf("Channel %d measurement voltage subtype changed to %d\n", ch, value);
+                    setChannelInterface(ch, value);
+                    break;
+
+                case Type::Current:
+                    printf("Channel %d measurement current subtype changed to %d\n", ch, value);
+                    setChannelInterface(ch, value);
+                    break;         
+
+                default:
+                    printf("Channel %d measurement type not implemented %d\n", ch, value);
+                    break;
+
+            }
+
+            // Signal that it was the type that changed
+            measurementSubTypeChanged = true;
+
+            // Break out of the channel loop
+            break;
+
+        }
+    }
+    return measurementSubTypeChanged;
 }
 
 
@@ -124,69 +245,16 @@ asynStatus ELM3704::writeInt32(asynUser *pasynUser, epicsInt32 value)
 
     printf("writeInt32 called - parameter: %d, value: %d\n", param, value);
 
-    // Check if the parameter is handled directly in this subclass
-    bool handled = false;
-    for (unsigned int i=0; i<4; i++)
+    // Check if we need to take any action via the SDO asynPortClient
+    if (checkIfMeasurementTypeChanged(param, value)){}
+    else if (checkIfMeasurementSubTypeChanged(param, value)){}
+    else
     {
-        if (param == measurementType[i])
-        {
-            // Set the loaded parameter to loading
-            setIntegerParam(measurementTypeLoaded[i], 1);
-            callParamCallbacks();
-
-            // Update the mbbi/mbbo strings
-            if (value == Type::None)
-            {
-                printf("Channel %d measurement type changed to None\n", i);
-                writeNoneStrings(i);
-            }
-            if (value == Type::Voltage)
-            {
-                printf("Channel %d measurement type changed to Voltage\n", i);
-                writeVoltageStrings(i);
-            }
-
-            // Set the loaded parameter to done
-            setIntegerParam(measurementTypeLoaded[i], 0);
-
-            // Let base class handle parameter update
-            handled = true;
-            status = asynPortDriver::writeInt32(pasynUser, value);
-            break;
-        }
-        else if (param == measurementSubType[i])
-        {
-            // Get current measurement type
-            epicsInt32 type;
-            getIntegerParam(measurementType[i], &type);
-
-            // Check if voltage
-            if (type == 1)
-            {
-                // Then set the interface parameter to the correct voltage setting
-                setChannelInterface(i, value);
-            }
-
-            // Check if write was successful
-            if (status)
-            {
-                printf("Changing %d measurement sub-type to %d failed\n", i, value);
-            }
-            else
-            {
-                printf("Channel %d measurement sub-type changed to %d\n", i, value);
-                status = asynPortDriver::writeInt32(pasynUser, value);
-            }
-            handled = true;
-            break;
-        }
+        printf("%s: parameter: %d not handled in ELM3704 clss\n", functionName, param);
     }
 
-    // Otherwise call the parent class for standard handling
-    if (handled != true)
-    {
-        status = asynPortDriver::writeInt32(pasynUser, value);
-    }
+    // Call the parent class method for handling parameter update and callback
+    status = asynPortDriver::writeInt32(pasynUser, value);
 
     // Check status
     if (status)
