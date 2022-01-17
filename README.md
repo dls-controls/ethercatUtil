@@ -49,10 +49,20 @@ fixed-purpose module:
 ### To do
 
 * Test module with actual signals
-* Add support for configuring multi-purpose modules
+* Add support for configuring ELM3704 multi-purpose modules
+    * Add other interface types
+    * Add secondary settings for specific interfaces
+    * Add openable EDM screen for secondary settings
 * Finalise EDM screen designs
 * Create CSS screens
 * Add optional logic for copying scale and offset values to an AreaDetector scale plugin
 * Add documentation
 * Add change log
-* Autosave aliases and settings
+* Autosave aliases and settings and check other PVs
+
+### Done
+
+* Add basic AsynPortDriver for ELM3704
+    * Connects an AsynPortClient to the SDO port created from the SDO requests
+    * Supports voltage measurements
+
