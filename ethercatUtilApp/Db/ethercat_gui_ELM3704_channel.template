@@ -55,9 +55,9 @@ record(mbbo, "$(P):$(R):CH$(CHANNEL):TYPE")
     field(FRST, "Thermocouple")
     field(FVST, "IEPE")
     field(SXST, "Strain Gauge FB")
-    field(SVST, "Stain Gauge HB")
+    field(SVST, "Strain Gauge HB")
     field(EIST, "Strain Gauge QB 2 wire")
-    field(NIST, "Stain Gauge QB 3 wire")
+    field(NIST, "Strain Gauge QB 3 wire")
     field(TEST, "RTD")
 }
 
@@ -85,9 +85,9 @@ record(mbbi, "$(P):$(R):CH$(CHANNEL):TYPE_RBV")
     field(FRST, "Thermocouple")
     field(FVST, "IEPE")
     field(SXST, "Strain Gauge FB")
-    field(SVST, "Stain Gauge HB")
+    field(SVST, "Strain Gauge HB")
     field(EIST, "Strain Gauge QB 2 wire")
-    field(NIST, "Stain Gauge QB 3 wire")
+    field(NIST, "Strain Gauge QB 3 wire")
     field(TEST, "RTD")
 }
 

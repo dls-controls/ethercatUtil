@@ -64,5 +64,5 @@ fixed-purpose module:
 
 * Add basic AsynPortDriver for ELM3704
     * Connects an AsynPortClient to the SDO port created from the SDO requests
-    * Supports voltage measurements
+    * Supports setting main interface setting for measurement type
 
