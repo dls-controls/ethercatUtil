@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef DIRECTORY_MANAGER_H
-#define DIRECTORY_MANAGER_H
+#ifndef ELM3704_H
+#define ELM3704_H
 
 
 #include "asynPortDriver.h"
@@ -38,12 +38,12 @@ protected:
         Current,
         Potentiometer,
         Thermocouple,
-        IEPE,
+        IEPiezoElectric,
         StrainGaugeFullBridge,
         StrainGaugeHalfBridge,
         StrainGaugeQuarterBridge2Wire,
         StrainGaugeQuarterBridge3Wire,
-        RTD
+        RTD,
     };
 
 private:
@@ -51,9 +51,19 @@ private:
     void writeNoneSubTypeOptions(const unsigned int &channel);
     void writeVoltageSubTypeOptions(const unsigned int &channel);
     void writeCurrentSubTypeOptions(const unsigned int &channel);
+    void writePotentiometerSubTypeOptions(const unsigned int &channel);
+    void writeThermocoupleSubTypeOptions(const unsigned int &channel);
+    void writeIEPESubTypeOptions(const unsigned int &channel);
+    void writeStrainGaugeFBSubTypeOptions(const unsigned int &channel);
+    void writeStrainGaugeHBSubTypeOptions(const unsigned int &channel);
+    void writeStrainGaugeQB2WireSubTypeOptions(const unsigned int &channel);
+    void writeStrainGaugeQB3WireSubTypeOptions(const unsigned int &channel);
+    void writeRTDSubTypeOptions(const unsigned int &channel);
 
-
+    // Methods for writing to the SDO port via the asynPortClient
     asynStatus setChannelInterface(const unsigned int &channel, const unsigned int &value);
+
+    // Methods for handling asynParameter changes
     bool checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &value);
     bool checkIfMeasurementSubTypeChanged(const int &param, const epicsInt32 &value);
 
@@ -63,4 +73,4 @@ private:
 };
 
 
-#endif /* DIRECTORY_MANAGER_H */
+#endif /* ELM3704_H */

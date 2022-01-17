@@ -44,30 +44,23 @@ ELM3704::ELM3704(const char* portName, const char* sdoPortName) : asynPortDriver
 // Empty the subtype options list
 void ELM3704::writeNoneSubTypeOptions(const unsigned int &channel)
 {
-    static const char *noneRangeStrings[1] = { "None" };
+    static const char *strings[1] = { "None" };
     // Map values based to the corresponding 0x80n01:01 interface value
-    static int noneRangeValues[1] = { 0 };
-    static int noneRangeSeverities[1] = { 0 };
+    static int values[1] = { 0 };
+    static int severities[1] = { 0 };
     // Set subtype parameter to first possible value
     setIntegerParam(measurementSubType[channel], 0);
     // Write zero to interface parameter of client SDO port
     setChannelInterface(channel, 0);
     // Update strings and values
-    doCallbacksEnum(
-        (char **)noneRangeStrings,
-        noneRangeValues,
-        noneRangeSeverities,
-        1,
-        measurementSubType[channel],
-        0
-    );
+    doCallbacksEnum((char **)strings, values, severities, 1, measurementSubType[channel], 0);
 }
 
 
 // Write the voltage subtype options
 void ELM3704::writeVoltageSubTypeOptions(const unsigned int &channel)
 {
-    static const char *voltageRangeStrings[13] = {
+    static const char *strings[13] = {
         "+/- 60V",
         "+/- 10V",
         "+/- 5V",
@@ -83,49 +76,222 @@ void ELM3704::writeVoltageSubTypeOptions(const unsigned int &channel)
         "0-5V",
     };
     // Map values based to the corresponding 0x80n01:01 interface value
-    static int voltageRangeValues[13] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15 };
-    static int voltageRangeSeverities[13] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    static int values[13] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15 };
+    static int severities[13] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     // Set subtype parameter to first possible value
-    setIntegerParam(measurementSubType[channel], voltageRangeValues[0]);
+    setIntegerParam(measurementSubType[channel], values[0]);
     // Write first value to interface parameter of client SDO port
-    setChannelInterface(channel, voltageRangeValues[0]);
+    setChannelInterface(channel, values[0]);
     // Update strings and values
-    doCallbacksEnum(
-        (char **)voltageRangeStrings,
-        voltageRangeValues,
-        voltageRangeSeverities,
-        13,
-        measurementSubType[channel],
-        0
-    );
+    doCallbacksEnum((char **)strings, values, severities, 13, measurementSubType[channel], 0);
 }
 
 
 // Write current subtype options
 void ELM3704::writeCurrentSubTypeOptions(const unsigned int &channel)
 {
-    static const char *currentRangeStrings[4] = {
+    static const char *strings[4] = {
         "+/- 20mA",
         "0-20mA",
         "4-20mA",
         "4-20mA NAMUR",
     };
     // Map values based to the corresponding 0x80n01:01 interface value
-    static int currentRangeValues[4] = { 17, 18, 19, 20 };
-    static int currentRangeSeverities[4] = { 0, 0, 0, 0 };
+    static int values[4] = { 17, 18, 19, 20 };
+    static int severities[4] = { 0, 0, 0, 0 };
     // Set subtype parameter to first possible value
-    setIntegerParam(measurementSubType[channel], currentRangeValues[0]);
+    setIntegerParam(measurementSubType[channel], values[0]);
     // Write first value to interface parameter of client SDO port
-    setChannelInterface(channel, currentRangeValues[0]);
+    setChannelInterface(channel, values[0]);
     // Update strings and values
-    doCallbacksEnum(
-        (char **)currentRangeStrings,
-        currentRangeValues,
-        currentRangeSeverities,
-        4,
-        measurementSubType[channel],
-        0
-    );
+    doCallbacksEnum((char **)strings, values, severities, 4, measurementSubType[channel], 0);
+}
+
+
+// Write potentiometer subtype options
+void ELM3704::writePotentiometerSubTypeOptions(const unsigned int &channel)
+{
+    static const char *strings[2] = {
+        "3 wire",
+        "5 wire",
+    };
+    // Map values based to the corresponding 0x80n01:01 interface value
+    static int values[2] = { 65, 66 };
+    static int severities[2] = { 0, 0 };
+    // Set subtype parameter to first possible value
+    setIntegerParam(measurementSubType[channel], values[0]);
+    // Write first value to interface parameter of client SDO port
+    setChannelInterface(channel, values[0]);
+    // Update strings and values
+    doCallbacksEnum((char **)strings, values, severities, 2, measurementSubType[channel], 0);
+}
+
+
+// Write thermocouple subtype options
+void ELM3704::writeThermocoupleSubTypeOptions(const unsigned int &channel)
+{
+    static const char *strings[3] = {
+        "80mV",
+        "CJC",
+        "CJC RTD",
+    };
+    // Map values based to the corresponding 0x80n01:01 interface value
+    static int values[3] = { 81, 86, 87 };
+    static int severities[3] = { 0, 0, 0 };
+    // Set subtype parameter to first possible value
+    setIntegerParam(measurementSubType[channel], values[0]);
+    // Write first value to interface parameter of client SDO port
+    setChannelInterface(channel, values[0]);
+    // Update strings and values
+    doCallbacksEnum((char **)strings, values, severities, 3, measurementSubType[channel], 0);
+}
+
+
+// Write integrated electronics piezo-electric subtype options
+void ELM3704::writeIEPESubTypeOptions(const unsigned int &channel)
+{
+    static const char *strings[5] = {
+        "+/- 10V",
+        "+/- 5V",
+        "+/- 2.5V",
+        "0-20V",
+        "0-10V",
+    };
+    // Map values based to the corresponding 0x80n01:01 interface value
+    static int values[5] = { 97, 98, 99, 107, 108 };
+    static int severities[5] = { 0, 0, 0, 0, 0 };
+    // Set subtype parameter to first possible value
+    setIntegerParam(measurementSubType[channel], values[0]);
+    // Write first value to interface parameter of client SDO port
+    setChannelInterface(channel, values[0]);
+    // Update strings and values
+    doCallbacksEnum((char **)strings, values, severities, 5, measurementSubType[channel], 0);
+}
+
+
+// Write strain gauge full bridge subtype options
+void ELM3704::writeStrainGaugeFBSubTypeOptions(const unsigned int &channel)
+{
+    static const char *strings[6] = {
+        "4 wire 2mV/V",
+        "4 wire 4mV/V",
+        "4 wire 32mV/V",
+        "6 wire 2mV/V",
+        "6 wire 4mV/V",
+        "6 wire 32mV/V",
+    };
+    // Map values based to the corresponding 0x80n01:01 interface value
+    static int values[6] = { 259, 261, 268, 291, 293, 300 };
+    static int severities[6] = { 0, 0, 0, 0, 0, 0 };
+    // Set subtype parameter to first possible value
+    setIntegerParam(measurementSubType[channel], values[0]);
+    // Write first value to interface parameter of client SDO port
+    setChannelInterface(channel, values[0]);
+    // Update strings and values
+    doCallbacksEnum((char **)strings, values, severities, 6, measurementSubType[channel], 0);
+}
+
+
+// Write strain gauge half bridge subtype options
+void ELM3704::writeStrainGaugeHBSubTypeOptions(const unsigned int &channel)
+{
+    static const char *strings[4] = {
+        "3 wire 2mV/V",
+        "3 wire 16mV/V",
+        "5 wire 2mV/V",
+        "5 wire 16mV/V",
+    };
+    // Map values based to the corresponding 0x80n01:01 interface value
+    static int values[4] = { 323, 329, 355, 361 };
+    static int severities[4] = { 0, 0, 0, 0 };
+    // Set subtype parameter to first possible value
+    setIntegerParam(measurementSubType[channel], values[0]);
+    // Write first value to interface parameter of client SDO port
+    setChannelInterface(channel, values[0]);
+    // Update strings and values
+    doCallbacksEnum((char **)strings, values, severities, 4, measurementSubType[channel], 0);
+}
+
+
+// Write strain gauge quarter bridge 2 wire subtype options
+void ELM3704::writeStrainGaugeQB2WireSubTypeOptions(const unsigned int &channel)
+{
+    static const char *strings[8] = {
+        "120R 2mV/V comp",
+        "120R 4mV/V comp",
+        "120R 8mV/V",
+        "120R 32mV/V",
+        "350R 2mV/V comp",
+        "350R 4mV/V comp",
+        "350R 8mV/V",
+        "350R 32mV/V",
+    };
+    // Map values based to the corresponding 0x80n01:01 interface value
+    static int values[8] = { 388, 390, 391, 396, 452, 454, 455, 460 };
+    static int severities[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    // Set subtype parameter to first possible value
+    setIntegerParam(measurementSubType[channel], values[0]);
+    // Write first value to interface parameter of client SDO port
+    setChannelInterface(channel, values[0]);
+    // Update strings and values
+    doCallbacksEnum((char **)strings, values, severities, 8, measurementSubType[channel], 0);
+}
+
+
+// Write strain gauge quarter bridge 3 wire subtype options
+void ELM3704::writeStrainGaugeQB3WireSubTypeOptions(const unsigned int &channel)
+{
+    static const char *strings[8] = {
+        "120R 2mV/V comp",
+        "120R 4mV/V comp",
+        "120R 8mV/V",
+        "120R 32mV/V",
+        "350R 2mV/V comp",
+        "350R 4mV/V comp",
+        "350R 8mV/V",
+        "350R 32mV/V",
+    };
+    // Map values based to the corresponding 0x80n01:01 interface value
+    static int values[8] = { 420, 422, 423, 428, 484, 486, 487, 492 };
+    static int severities[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+    // Set subtype parameter to first possible value
+    setIntegerParam(measurementSubType[channel], values[0]);
+    // Write first value to interface parameter of client SDO port
+    setChannelInterface(channel, values[0]);
+    // Update strings and values
+    doCallbacksEnum((char **)strings, values, severities, 8, measurementSubType[channel], 0);
+}
+
+
+// Write strain gauge quarter bridge 3 wire subtype options
+void ELM3704::writeRTDSubTypeOptions(const unsigned int &channel)
+{
+    static const char *strings[15] = {
+        "2 wire 5k",
+        "3 wire 5k",
+        "4 wire 5k",
+        "2 wire 2k",
+        "3 wire 2k",
+        "4 wire 2k",
+        "2 wire 500R",
+        "3 wire 500R",
+        "4 wire 500R",
+        "2 wire 200R",
+        "3 wire 200R",
+        "4 wire 200R",
+        "2 wire 50R",
+        "3 wire 50R",
+        "4 wire 50R",
+    };
+    // Map values based to the corresponding 0x80n01:01 interface value
+    static int values[15] = { 785, 786, 787, 800, 801, 802, 821, 822, 823, 830, 831, 832, 848, 849, 850 };
+    static int severities[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    // Set subtype parameter to first possible value
+    setIntegerParam(measurementSubType[channel], values[0]);
+    // Write first value to interface parameter of client SDO port
+    setChannelInterface(channel, values[0]);
+    // Update strings and values
+    doCallbacksEnum((char **)strings, values, severities, 15, measurementSubType[channel], 0);
 }
 
 
@@ -170,6 +336,46 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                     writeCurrentSubTypeOptions(ch);
                     break;
 
+                case Type::Potentiometer:
+                    printf("Channel %d measurement type changed to Potentiometer\n", ch);
+                    writePotentiometerSubTypeOptions(ch);
+                    break;
+
+                case Type::Thermocouple:
+                    printf("Channel %d measurement type changed to Thermocouple\n", ch);
+                    writeThermocoupleSubTypeOptions(ch);
+                    break;
+
+                case Type::IEPiezoElectric:
+                    printf("Channel %d measurement type changed to IEPE\n", ch);
+                    writePotentiometerSubTypeOptions(ch);
+                    break;
+
+                case Type::StrainGaugeFullBridge:
+                    printf("Channel %d measurement type changed to Strain gauge FB\n", ch);
+                    writeStrainGaugeFBSubTypeOptions(ch);
+                    break;
+
+                case Type::StrainGaugeHalfBridge:
+                    printf("Channel %d measurement type changed to Strain gauge HB\n", ch);
+                    writeStrainGaugeHBSubTypeOptions(ch);
+                    break;
+
+                case Type::StrainGaugeQuarterBridge2Wire:
+                    printf("Channel %d measurement type changed to Strain gauge QB 2 wire\n", ch);
+                    writeStrainGaugeQB2WireSubTypeOptions(ch);
+                    break;
+
+                case Type::StrainGaugeQuarterBridge3Wire:
+                    printf("Channel %d measurement type changed to Strain gauge QB 3 wire\n", ch);
+                    writeStrainGaugeQB3WireSubTypeOptions(ch);
+                    break;
+
+                case Type::RTD:
+                    printf("Channel %d measurement type changed to RTD\n", ch);
+                    writeRTDSubTypeOptions(ch);
+                    break;
+
                 default:
                     printf("Channel %d measurement type changed to unimplemented type %d\n", ch, value);
                     writeNoneSubTypeOptions(ch);
@@ -193,41 +399,16 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
 // Check and handle changes to the measurement subtype
 bool ELM3704::checkIfMeasurementSubTypeChanged(const int &param, const epicsInt32 &value)
 {
-    bool measurementSubTypeChanged = false;
     for (unsigned int ch=0; ch<4; ch++)
     {
         if (param == measurementSubType[ch])
         {
-            // Get current measurement type to determine actions to take
-            epicsInt32 type;
-            getIntegerParam(measurementType[ch], &type);
-            switch(type)
-            {
-                case Type::Voltage:
-                    printf("Channel %d measurement voltage subtype changed to %d\n", ch, value);
-                    setChannelInterface(ch, value);
-                    break;
-
-                case Type::Current:
-                    printf("Channel %d measurement current subtype changed to %d\n", ch, value);
-                    setChannelInterface(ch, value);
-                    break;         
-
-                default:
-                    printf("Channel %d measurement type not implemented %d\n", ch, value);
-                    break;
-
-            }
-
-            // Signal that it was the type that changed
-            measurementSubTypeChanged = true;
-
-            // Break out of the channel loop
-            break;
-
+            printf("Channel %d measurement subtype changed to %d\n", ch, value);
+            setChannelInterface(ch, value);
+            return true;
         }
     }
-    return measurementSubTypeChanged;
+    return false;
 }
 
 
@@ -242,8 +423,6 @@ asynStatus ELM3704::writeInt32(asynUser *pasynUser, epicsInt32 value)
 
     // Updated parameter
     const int param = pasynUser->reason;
-
-    printf("writeInt32 called - parameter: %d, value: %d\n", param, value);
 
     // Check if we need to take any action via the SDO asynPortClient
     if (checkIfMeasurementTypeChanged(param, value)){}
