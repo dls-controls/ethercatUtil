@@ -9,3 +9,4 @@ iocs
 documentation
 *~
 *.pyc
+.vscode
