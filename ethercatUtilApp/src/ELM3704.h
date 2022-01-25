@@ -31,6 +31,7 @@ protected:
     int measurementSubType[4];
     int measurementTypeLoaded[4];
     int measurementScaler[4];
+    int channelStatusMessage[4];
 
     // Measurement type enum
     enum Type {
@@ -71,6 +72,9 @@ private:
     // Methods for writing to the SDO port via the generic method above
     asynStatus setChannelInterface(const unsigned int &channel, const unsigned int &value);
     asynStatus setChannelScaler(const unsigned int &channel, const unsigned int &value);
+
+    // Method for reading current measurement settings (e.g. after interface change)
+    asynStatus readCurrentChannelSubSettings(const unsigned int &channel);
 
     // Methods for handling asynParameter changes
     bool checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &value);

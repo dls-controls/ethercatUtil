@@ -3,6 +3,9 @@
 #include <iocsh.h>
 #include <epicsExport.h>
 #include <epicsThread.h>
+#include <alarm.h>
+
+#include <stdexcept>
 
 #include <string>
 
@@ -14,8 +17,8 @@ static const char *driverName = "ELM3704";
 ELM3704::ELM3704(const char* portName, const char* sdoPortName) : asynPortDriver(
     portName,  /* asyn port name for this driver*/
     1, /* maxAddr */
-    asynInt32Mask | asynEnumMask  | asynDrvUserMask, /* Interface mask */
-    asynInt32Mask | asynEnumMask,  /* Interrupt mask */
+    asynInt32Mask | asynEnumMask | asynOctetMask | asynDrvUserMask, /* Interface mask */
+    asynInt32Mask | asynEnumMask | asynOctetMask,  /* Interrupt mask */
     0, /* asynFlags.  This driver does not block and it is not multi-device, so flag is 0 */
     1, /* Autoconnect */
     0, /* Default priority */
@@ -42,6 +45,10 @@ ELM3704::ELM3704(const char* portName, const char* sdoPortName) : asynPortDriver
         // Measurement scaler
         epicsSnprintf(str, NBUFF, "CH%d:SCALER", ch+1);
         createParam(str, asynParamInt32, &measurementScaler[ch]);
+
+        // Status message
+        epicsSnprintf(str, NBUFF, "CH%d:STATUS", ch+1);
+        createParam(str, asynParamOctet, &channelStatusMessage[ch]);
     }
 }
 
@@ -312,6 +319,7 @@ void ELM3704::writeDefaultScalerOptions(const unsigned int &channel)
     static int severities[2] = { 0, 0 };
     // Set scaler parameter to first possible value
     setIntegerParam(measurementScaler[channel], values[0]);
+    // TODO: only write if the current value doesn't match
     // Write first value to scaler parameter of client SDO port
     setChannelScaler(channel, values[0]);
     // Update strings and values
@@ -322,20 +330,23 @@ void ELM3704::writeDefaultScalerOptions(const unsigned int &channel)
 // Write default scaler options
 void ELM3704::writeThermocoupleScalerOptions(const unsigned int &channel)
 {
-    static const char *strings[3] = {
+    static const char *strings[5] = {
+        "Extended range",
+        "Legacy range",
         "Celsius",
         "Kelvin",
         "Fahrenheit",
     };
     // Map values based to the corresponding 0x80n01:2E scaler value
-    static int values[3] = { 6, 7, 8 };
-    static int severities[3] = { 0, 0, 0 };
+    static int values[5] = { 0, 3, 6, 7, 8 };
+    static int severities[5] = { 0, 0, 0, 0, 0 };
     // Set scaler parameter to first possible value
     setIntegerParam(measurementScaler[channel], values[0]);
+    // TODO: only write if the current value doesn't match
     // Write first value to scaler parameter of client SDO port
     setChannelScaler(channel, values[0]);
     // Update strings and values
-    doCallbacksEnum((char **)strings, values, severities, 3, measurementScaler[channel], 0);
+    doCallbacksEnum((char **)strings, values, severities, 5, measurementScaler[channel], 0);
 }
 
 
@@ -354,7 +365,7 @@ asynStatus ELM3704::writeInt32SdoPortClient(const std::string &paramName, const 
         // Check readback - there may be some delay so wait until it matches for TIMEOUT
         epicsInt32 readbackValue;
         double parameterSetTime = 0.0;
-        static const double paramaterSetTimeout = 5.0;
+        static const double paramaterSetTimeout = 2.5;
         static const double parameterPollInterval = 0.1;
         asynStatus readStatus = sdoPortClient.read(paramName, &readbackValue);
         if (readStatus)
@@ -373,9 +384,8 @@ asynStatus ELM3704::writeInt32SdoPortClient(const std::string &paramName, const 
                 // Check if we exceed a timeout limit
                 if (parameterSetTime > paramaterSetTimeout)
                 {
-                    // TODO: set and return bad status here
-                    printf("ERROR: timeout waiting for parameter %s to update\n", paramName.c_str());
-                    break;
+                    // Throw an exception which should be caught by writeInt32
+                    throw std::runtime_error("ERROR: timeout waiting for " + paramName + " to update");
                 }
                 else if (readStatus)
                 {
@@ -401,16 +411,54 @@ asynStatus ELM3704::setChannelInterface(const unsigned int &channel, const unsig
 {
     // Add one to channel as the asyn parameter is numbered 1-4
     std::string interface_string = "CH" + std::to_string(channel+1) + ":Interface";
-    return writeInt32SdoPortClient(interface_string, (epicsInt32) value);
+    asynStatus status = writeInt32SdoPortClient(interface_string, (epicsInt32) value);
+
+    // When we change interface we also need to check if sub-settings change based on
+    // allowed values
+    readCurrentChannelSubSettings(channel);
+
+    // TODO: set status parameter when changing interface based on success/fail
+
+    return status;
 }
 
 
 // Change the Scaler value of a channel via the asynPortClient
 asynStatus ELM3704::setChannelScaler(const unsigned int &channel, const unsigned int &value)
 {
+    asynStatus status;
+
     // Add one to channel as the asyn parameter is numbered 1-4
     std::string scaler_string = "CH" + std::to_string(channel+1) + ":Scaler";
-    return writeInt32SdoPortClient(scaler_string, (epicsInt32) value);
+    try
+    {
+        status = writeInt32SdoPortClient(scaler_string, (epicsInt32) value);
+    } catch (const std::runtime_error &e)
+    {
+        // Update to bad channel status message and rethrow exception
+        setStringParam(channelStatusMessage[channel], "Failed to set scaler parameter");
+        setParamAlarmSeverity(channelStatusMessage[channel], epicsSevMajor);
+        throw e;
+    }
+
+    // Update to bad channel status message and rethrow exception
+    setStringParam(channelStatusMessage[channel], "Updated scaler parameter");
+    setParamAlarmSeverity(channelStatusMessage[channel], epicsSevNone);
+
+    return status;
+}
+
+
+// Method for reading sub-settings of a module (e.g. after interface change)
+asynStatus ELM3704::readCurrentChannelSubSettings(const unsigned int &channel)
+{
+    // Get current scaler value
+    std::string scaler_string = "CH" + std::to_string(channel+1) + ":Scaler";
+    epicsInt32 scaler_value;
+    asynStatus status = sdoPortClient.read(scaler_string, &scaler_value);
+    setIntegerParam(measurementScaler[channel], scaler_value);
+
+    return status;
 }
 
 
@@ -565,25 +613,37 @@ asynStatus ELM3704::writeInt32(asynUser *pasynUser, epicsInt32 value)
     const int param = pasynUser->reason;
 
     // Check if we need to take any action via the SDO asynPortClient
-    // TODO: return status values here via parameter reference
+    // TODO: return status values here via parameter reference and decide whether to update parameter
     // TODO: break out these checks into sub method if grow too large
-    if (checkIfMeasurementTypeChanged(param, value)) {}
-    else if (checkIfMeasurementSubTypeChanged(param, value)) {}
-    else if (checkIfScalerOptionChanged(param, value)) {}
-    else
+    // TOOD: if type or subtype changed, add method to update current setting readbacks
+    try
     {
-        printf("%s: parameter: %d not handled in ELM3704 class\n", functionName, param);
+        if (checkIfMeasurementTypeChanged(param, value)) {}
+        else if (checkIfMeasurementSubTypeChanged(param, value)) {}
+        else if (checkIfScalerOptionChanged(param, value)) {}
+        else
+        {
+            printf("%s: parameter: %d not handled in ELM3704 class\n", functionName, param);
+        }
+    } catch (const std::runtime_error &e)
+    {
+        status = asynError;
     }
-
-    // Call the parent class method for handling parameter update and callback
-    status = asynPortDriver::writeInt32(pasynUser, value);
 
     // Check status
     if (status)
     {
         asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,"%s::%s: Error setting values'\n",
                   driverName, functionName);
+        // Callback on parameters that may have been un-set as part of errors
+        callParamCallbacks();
     }
+    else
+    {
+        // Call the parent class method for handling parameter update and callback
+        status = asynPortDriver::writeInt32(pasynUser, value);
+    }
+
     return status;   
 }
 

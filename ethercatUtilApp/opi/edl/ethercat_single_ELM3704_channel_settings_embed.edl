@@ -30,7 +30,7 @@ beginObjectProperties
 major 4
 minor 6
 release 0
-x 130
+x 160
 y 0
 w 135
 h 20
@@ -53,7 +53,7 @@ minor 0
 release 0
 x 0
 y 0
-w 120
+w 150
 h 20
 fgColor index 25
 bgColor index 3
@@ -73,7 +73,7 @@ minor 0
 release 0
 x 0
 y 25
-w 120
+w 150
 h 20
 fgColor index 25
 bgColor index 3
@@ -91,7 +91,7 @@ beginObjectProperties
 major 4
 minor 6
 release 0
-x 130
+x 160
 y 25
 w 135
 h 20
@@ -114,7 +114,7 @@ minor 0
 release 0
 x 0
 y 75
-w 120
+w 150
 h 20
 fgColor index 25
 bgColor index 3
@@ -132,13 +132,35 @@ beginObjectProperties
 major 4
 minor 6
 release 0
-x 130
+x 160
 y 75
 w 135
 h 20
 controlPv "$(P):$(R):CH$(CHANNEL):SCALER_RBV"
 font "arial-bold-r-12.0"
 fgColor index 16
+bgColor index 10
+limitsFromDb
+nullColor index 0
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 6
+release 0
+x 0
+y 125
+w 295
+h 20
+controlPv "$(P):$(R):CH$(CHANNEL):STATUS"
+font "arial-bold-r-12.0"
+fgColor index 16
+fgAlarm
 bgColor index 10
 limitsFromDb
 nullColor index 0
