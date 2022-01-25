@@ -58,6 +58,8 @@ fixed-purpose module:
         * RTD element
     * Add openable EDM screen for secondary settings
     * Add channel status string for capturing error messages (setting invalid parameters)
+    * Add handling of setting an invalid setting (reverting back)
+    * Add handling of other settings changing when interface changes
 * Finalise EDM screen designs
 * Create CSS screens
 * Add optional logic for copying scale and offset values to an AreaDetector scale plugin
