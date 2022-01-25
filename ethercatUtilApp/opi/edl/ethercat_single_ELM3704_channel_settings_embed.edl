@@ -1,0 +1,149 @@
+4 0 1
+beginScreenProperties
+major 4
+minor 0
+release 1
+x 1549
+y 466
+w 400
+h 600
+font "arial-medium-r-12.0"
+ctlFont "arial-medium-r-12.0"
+btnFont "arial-medium-r-12.0"
+fgColor index 14
+bgColor index 3
+textColor index 14
+ctlFgColor1 index 14
+ctlFgColor2 index 0
+ctlBgColor1 index 0
+ctlBgColor2 index 14
+topShadowColor index 0
+botShadowColor index 14
+showGrid
+snapToGrid
+gridSize 5
+endScreenProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 6
+release 0
+x 130
+y 0
+w 135
+h 20
+controlPv "$(P):$(R):CH$(CHANNEL):TYPE_RBV"
+font "arial-bold-r-12.0"
+fgColor index 16
+bgColor index 10
+limitsFromDb
+nullColor index 0
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 0
+w 120
+h 20
+fgColor index 25
+bgColor index 3
+inconsistentColor index 79
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(P):$(R):CH$(CHANNEL):TYPE"
+indicatorPv "$(P):$(R):CH$(CHANNEL):TYPE_RBV"
+font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 25
+w 120
+h 20
+fgColor index 25
+bgColor index 3
+inconsistentColor index 79
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(P):$(R):CH$(CHANNEL):SUBTYPE"
+indicatorPv "$(P):$(R):CH$(CHANNEL):SUBTYPE_RBV"
+font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 6
+release 0
+x 130
+y 25
+w 135
+h 20
+controlPv "$(P):$(R):CH$(CHANNEL):SUBTYPE_RBV"
+font "arial-bold-r-12.0"
+fgColor index 16
+bgColor index 10
+limitsFromDb
+nullColor index 0
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 75
+w 120
+h 20
+fgColor index 25
+bgColor index 3
+inconsistentColor index 79
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(P):$(R):CH$(CHANNEL):SCALER"
+indicatorPv "$(P):$(R):CH$(CHANNEL):SCALER_RBV"
+font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 6
+release 0
+x 130
+y 75
+w 135
+h 20
+controlPv "$(P):$(R):CH$(CHANNEL):SCALER_RBV"
+font "arial-bold-r-12.0"
+fgColor index 16
+bgColor index 10
+limitsFromDb
+nullColor index 0
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+

@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 886
-y 1174
+x 864
+y 1042
 w 930
 h 20
 font "arial-medium-r-12.0"
@@ -52,9 +52,9 @@ beginObjectProperties
 major 4
 minor 6
 release 0
-x 455
+x 475
 y 0
-w 120
+w 100
 h 20
 controlPv "$(P):$(R):CH$(CHANNEL):RAW"
 font "arial-bold-r-12.0"
@@ -181,5 +181,28 @@ botShadowColor index 11
 controlPv "$(P):$(R):CH$(CHANNEL):SUBTYPE"
 indicatorPv "$(P):$(R):CH$(CHANNEL):SUBTYPE_RBV"
 font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Related Display)
+object relatedDisplayClass
+beginObjectProperties
+major 4
+minor 4
+release 0
+x 450
+y 0
+w 20
+h 20
+fgColor index 43
+bgColor index 3
+topShadowColor index 1
+botShadowColor index 11
+font "arial-bold-r-12.0"
+buttonLabel "I"
+numPvs 4
+numDsps 1
+displayFileName {
+  0 "ethercat_single_ELM3704_channel_settings.edl"
+}
 endObjectProperties
 

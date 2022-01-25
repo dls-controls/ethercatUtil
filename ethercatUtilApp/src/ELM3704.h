@@ -30,6 +30,7 @@ protected:
     int measurementType[4];
     int measurementSubType[4];
     int measurementTypeLoaded[4];
+    int measurementScaler[4];
 
     // Measurement type enum
     enum Type {
@@ -60,12 +61,21 @@ private:
     void writeStrainGaugeQB3WireSubTypeOptions(const unsigned int &channel);
     void writeRTDSubTypeOptions(const unsigned int &channel);
 
-    // Methods for writing to the SDO port via the asynPortClient
+    // Methods for updating secondary settings
+    void writeDefaultScalerOptions(const unsigned int &channel);
+    void writeThermocoupleScalerOptions(const unsigned int &channel);
+
+    // Generic methods for writing to the SDO port via asynPortClient
+    asynStatus writeInt32SdoPortClient(const std::string &paramName, const epicsInt32 &value);
+
+    // Methods for writing to the SDO port via the generic method above
     asynStatus setChannelInterface(const unsigned int &channel, const unsigned int &value);
+    asynStatus setChannelScaler(const unsigned int &channel, const unsigned int &value);
 
     // Methods for handling asynParameter changes
     bool checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &value);
     bool checkIfMeasurementSubTypeChanged(const int &param, const epicsInt32 &value);
+    bool checkIfScalerOptionChanged(const int &param, const epicsInt32 &value);
 
     // Variables
     asynPortClient sdoPortClient;

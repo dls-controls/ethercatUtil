@@ -104,15 +104,23 @@ class ELM3704(AnalogInputModule):
 
             # Create the entries for each parameter under main settings via subindex
             # Interface 0x80n0:01
-            interface_name = settings_name + ":Interface"
+            entry_name = settings_name + ":Interface"
             asyn_parameter_name = "{channel}:Interface".format(channel=channel)
             description = "{channel} interface".format(channel=channel)
             subindex = 1
             bit_length = 16
-            SdoEntryControl(interface_name, sdo_control_settings, asyn_parameter_name, description, subindex, bit_length)
+            SdoEntryControl(entry_name, sdo_control_settings, asyn_parameter_name, description, subindex, bit_length)
 
             # Sensor supply 0x80n0:02
 
             # RTD element 0x80n0:14
 
             # TC element 0x80n0:15
+
+            # Scaler 0x80n0:2E
+            entry_name = settings_name + ":Scaler"
+            asyn_parameter_name = "{channel}:Scaler".format(channel=channel)
+            description = "{channel} scaling".format(channel=channel)
+            subindex = 46
+            bit_length = 16
+            SdoEntryControl(entry_name, sdo_control_settings, asyn_parameter_name, description, subindex, bit_length)

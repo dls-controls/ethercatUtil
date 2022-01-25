@@ -2,6 +2,7 @@
 
 #include <iocsh.h>
 #include <epicsExport.h>
+#include <epicsThread.h>
 
 #include <string>
 
@@ -37,6 +38,10 @@ ELM3704::ELM3704(const char* portName, const char* sdoPortName) : asynPortDriver
         // Measurement type is loaded
         epicsSnprintf(str, NBUFF, "CH%d:LOADED", ch+1);
         createParam(str, asynParamInt32, &measurementTypeLoaded[ch]);
+
+        // Measurement scaler
+        epicsSnprintf(str, NBUFF, "CH%d:SCALER", ch+1);
+        createParam(str, asynParamInt32, &measurementScaler[ch]);
     }
 }
 
@@ -295,13 +300,117 @@ void ELM3704::writeRTDSubTypeOptions(const unsigned int &channel)
 }
 
 
+// Write default scaler options
+void ELM3704::writeDefaultScalerOptions(const unsigned int &channel)
+{
+    static const char *strings[2] = {
+        "Extended range",
+        "Legacy range",
+    };
+    // Map values based to the corresponding 0x80n01:2E scaler value
+    static int values[2] = { 0, 3 };
+    static int severities[2] = { 0, 0 };
+    // Set scaler parameter to first possible value
+    setIntegerParam(measurementScaler[channel], values[0]);
+    // Write first value to scaler parameter of client SDO port
+    setChannelScaler(channel, values[0]);
+    // Update strings and values
+    doCallbacksEnum((char **)strings, values, severities, 2, measurementScaler[channel], 0);
+}
+
+
+// Write default scaler options
+void ELM3704::writeThermocoupleScalerOptions(const unsigned int &channel)
+{
+    static const char *strings[3] = {
+        "Celsius",
+        "Kelvin",
+        "Fahrenheit",
+    };
+    // Map values based to the corresponding 0x80n01:2E scaler value
+    static int values[3] = { 6, 7, 8 };
+    static int severities[3] = { 0, 0, 0 };
+    // Set scaler parameter to first possible value
+    setIntegerParam(measurementScaler[channel], values[0]);
+    // Write first value to scaler parameter of client SDO port
+    setChannelScaler(channel, values[0]);
+    // Update strings and values
+    doCallbacksEnum((char **)strings, values, severities, 3, measurementScaler[channel], 0);
+}
+
+
+// Generic wrapper method for writing to SDO port via asynPortClient
+asynStatus ELM3704::writeInt32SdoPortClient(const std::string &paramName, const epicsInt32 &value)
+{
+    asynStatus status = sdoPortClient.write(paramName, value);
+
+    // Check status
+    if (status)
+    {
+        printf("ERROR: failed to set asynPortClient parameter %s to value %d\n", paramName.c_str(), value);
+    }
+    else
+    {
+        // Check readback - there may be some delay so wait until it matches for TIMEOUT
+        epicsInt32 readbackValue;
+        double parameterSetTime = 0.0;
+        static const double paramaterSetTimeout = 5.0;
+        static const double parameterPollInterval = 0.1;
+        asynStatus readStatus = sdoPortClient.read(paramName, &readbackValue);
+        if (readStatus)
+        {
+            printf("ERROR: could not read asynPortClient parameter %s\n", paramName.c_str());
+        }
+        else
+        {
+            // Readback value doesn't match, wait and see if it updates
+            while (readbackValue != value)
+            {
+                epicsThreadSleep(parameterPollInterval);
+                readStatus = sdoPortClient.read(paramName, &readbackValue);
+                parameterSetTime += parameterPollInterval;
+
+                // Check if we exceed a timeout limit
+                if (parameterSetTime > paramaterSetTimeout)
+                {
+                    // TODO: set and return bad status here
+                    printf("ERROR: timeout waiting for parameter %s to update\n", paramName.c_str());
+                    break;
+                }
+                else if (readStatus)
+                {
+                    printf("ERROR: could not read asynPortClient parameter %s\n", paramName.c_str());
+                    break;
+                }
+            }
+            printf(
+                "Set asynPortClient parameter %s to value %d (%d) after %fs\n",
+                paramName.c_str(),
+                value,
+                readbackValue,
+                parameterSetTime
+            );
+        }
+    }
+    return status;
+}
+
+
 // Change the Interface value of a channel via the asynPortClient
 asynStatus ELM3704::setChannelInterface(const unsigned int &channel, const unsigned int &value)
 {
     // Add one to channel as the asyn parameter is numbered 1-4
     std::string interface_string = "CH" + std::to_string(channel+1) + ":Interface";
-    printf("Setting channel %d interface via param %s to %d\n", channel+1, interface_string.c_str(), value);
-    return sdoPortClient.write(interface_string, (epicsInt32) value);
+    return writeInt32SdoPortClient(interface_string, (epicsInt32) value);
+}
+
+
+// Change the Scaler value of a channel via the asynPortClient
+asynStatus ELM3704::setChannelScaler(const unsigned int &channel, const unsigned int &value)
+{
+    // Add one to channel as the asyn parameter is numbered 1-4
+    std::string scaler_string = "CH" + std::to_string(channel+1) + ":Scaler";
+    return writeInt32SdoPortClient(scaler_string, (epicsInt32) value);
 }
 
 
@@ -318,67 +427,82 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
             // Force the load
             callParamCallbacks();
 
-            // Update measurement subtype strings and values based on input value
+            /* Update other options based on the current selected type
+             *   - Measurement subtype
+             *   - Scaler options
+             */
             switch (value)
             {
                 case Type::None:
                     printf("Channel %d measurement type changed to None\n", ch);
                     writeNoneSubTypeOptions(ch);
+                    writeDefaultScalerOptions(ch);
                     break;
 
                 case Type::Voltage:
                     printf("Channel %d measurement type changed to Voltage\n", ch);
                     writeVoltageSubTypeOptions(ch);
+                    writeDefaultScalerOptions(ch);
                     break;
 
                 case Type::Current:
                     printf("Channel %d measurement type changed to Current\n", ch);
                     writeCurrentSubTypeOptions(ch);
+                    writeDefaultScalerOptions(ch);
                     break;
 
                 case Type::Potentiometer:
                     printf("Channel %d measurement type changed to Potentiometer\n", ch);
                     writePotentiometerSubTypeOptions(ch);
+                    writeDefaultScalerOptions(ch);
                     break;
 
                 case Type::Thermocouple:
                     printf("Channel %d measurement type changed to Thermocouple\n", ch);
                     writeThermocoupleSubTypeOptions(ch);
+                    writeThermocoupleScalerOptions(ch);
                     break;
 
                 case Type::IEPiezoElectric:
                     printf("Channel %d measurement type changed to IEPE\n", ch);
                     writePotentiometerSubTypeOptions(ch);
+                    writeDefaultScalerOptions(ch);
                     break;
 
                 case Type::StrainGaugeFullBridge:
                     printf("Channel %d measurement type changed to Strain gauge FB\n", ch);
                     writeStrainGaugeFBSubTypeOptions(ch);
+                    writeDefaultScalerOptions(ch);
                     break;
 
                 case Type::StrainGaugeHalfBridge:
                     printf("Channel %d measurement type changed to Strain gauge HB\n", ch);
                     writeStrainGaugeHBSubTypeOptions(ch);
+                    writeDefaultScalerOptions(ch);
                     break;
 
                 case Type::StrainGaugeQuarterBridge2Wire:
                     printf("Channel %d measurement type changed to Strain gauge QB 2 wire\n", ch);
                     writeStrainGaugeQB2WireSubTypeOptions(ch);
+                    writeDefaultScalerOptions(ch);
                     break;
 
                 case Type::StrainGaugeQuarterBridge3Wire:
                     printf("Channel %d measurement type changed to Strain gauge QB 3 wire\n", ch);
                     writeStrainGaugeQB3WireSubTypeOptions(ch);
+                    writeDefaultScalerOptions(ch);
                     break;
 
                 case Type::RTD:
                     printf("Channel %d measurement type changed to RTD\n", ch);
                     writeRTDSubTypeOptions(ch);
+                    writeDefaultScalerOptions(ch);
                     break;
 
                 default:
                     printf("Channel %d measurement type changed to unimplemented type %d\n", ch, value);
                     writeNoneSubTypeOptions(ch);
+                    writeDefaultScalerOptions(ch);
                     break;
             }
 
@@ -412,6 +536,22 @@ bool ELM3704::checkIfMeasurementSubTypeChanged(const int &param, const epicsInt3
 }
 
 
+// Check and handle changes to the scaler option
+bool ELM3704::checkIfScalerOptionChanged(const int &param, const epicsInt32 &value)
+{
+    for (unsigned int ch=0; ch<4; ch++)
+    {
+        if (param == measurementScaler[ch])
+        {
+            printf("Channel %d scaler option changed to %d\n", ch, value);
+            setChannelScaler(ch, value);
+            return true;
+        }
+    }
+    return false;
+}
+
+
 // AsynPortDriver::writeInt32 override
 asynStatus ELM3704::writeInt32(asynUser *pasynUser, epicsInt32 value)
 {
@@ -425,11 +565,14 @@ asynStatus ELM3704::writeInt32(asynUser *pasynUser, epicsInt32 value)
     const int param = pasynUser->reason;
 
     // Check if we need to take any action via the SDO asynPortClient
-    if (checkIfMeasurementTypeChanged(param, value)){}
-    else if (checkIfMeasurementSubTypeChanged(param, value)){}
+    // TODO: return status values here via parameter reference
+    // TODO: break out these checks into sub method if grow too large
+    if (checkIfMeasurementTypeChanged(param, value)) {}
+    else if (checkIfMeasurementSubTypeChanged(param, value)) {}
+    else if (checkIfScalerOptionChanged(param, value)) {}
     else
     {
-        printf("%s: parameter: %d not handled in ELM3704 clss\n", functionName, param);
+        printf("%s: parameter: %d not handled in ELM3704 class\n", functionName, param);
     }
 
     // Call the parent class method for handling parameter update and callback
