@@ -52,7 +52,12 @@ fixed-purpose module:
 * Add support for configuring ELM3704 multi-purpose modules
     * Add other interface types
     * Add secondary settings for specific interfaces
+        * Scaler (values depending on type, TC uses values 6-8 except in 80mV mode)
+        * Sensor supply for strain gauge
+        * Thermocouple element
+        * RTD element
     * Add openable EDM screen for secondary settings
+    * Add channel status string for capturing error messages (setting invalid parameters)
 * Finalise EDM screen designs
 * Create CSS screens
 * Add optional logic for copying scale and offset values to an AreaDetector scale plugin
