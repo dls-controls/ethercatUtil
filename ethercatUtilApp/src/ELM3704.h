@@ -88,7 +88,7 @@ private:
     // Method for updating channel status string
     void updateChannelStatusString(const unsigned int &channel, const std::string &string, const epicsAlarmSeverity &severity);
 
-    // Variables
+    // asynPortClient to talk to the SDO port when setting channel parameters
     asynPortClient sdoPortClient;
 
 };

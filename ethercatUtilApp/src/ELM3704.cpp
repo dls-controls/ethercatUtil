@@ -611,8 +611,8 @@ asynStatus ELM3704::writeInt32(asynUser *pasynUser, epicsInt32 value)
     // Check status
     if (status)
     {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,"%s::%s: Error setting values'\n",
-                  driverName, functionName);
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,"%s::%s: Error setting param %d to %d\n",
+                  driverName, functionName, param, value);
         // Callback on parameters that may have been un-set as part of errors
         callParamCallbacks();
     }
