@@ -49,6 +49,13 @@ ELM3704::ELM3704(const char* portName, const char* sdoPortName) : asynPortDriver
         epicsSnprintf(str, NBUFF, "CH%d:STATUS", ch+1);
         createParam(str, asynParamOctet, &channelStatusMessage[ch]);
     }
+
+    /* Initialise asyn parameters */
+    for (unsigned int ch=0; ch<4; ch++)
+    {
+        // Set status message string
+        setStringParam(channelStatusMessage[ch], "OK");
+    }
 }
 
 
@@ -347,7 +354,7 @@ asynStatus ELM3704::writeInt32SdoPortClient(const std::string &paramName, const 
         // Check readback - there may be some delay so wait until it matches for TIMEOUT
         epicsInt32 readbackValue;
         double parameterSetTime = 0.0;
-        static const double paramaterSetTimeout = 2.5;
+        static const double paramaterSetTimeout = 5.0;
         static const double parameterPollInterval = 0.1;
         asynStatus readStatus = sdoPortClient.read(paramName, &readbackValue);
         if (readStatus)
@@ -605,14 +612,15 @@ asynStatus ELM3704::writeInt32(asynUser *pasynUser, epicsInt32 value)
         }
     } catch (const std::runtime_error &e)
     {
+        printf("%s: caught runtime error: %s\n", functionName, e.what());
         status = asynError;
     }
 
     // Check status
     if (status)
     {
-        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,"%s::%s: Error setting param %d to %d\n",
-                  driverName, functionName, param, value);
+        asynPrint(pasynUserSelf, ASYN_TRACE_ERROR,"%s::%s: Error setting param %d to %d (status %d)\n",
+                  driverName, functionName, param, value, status);
         // Callback on parameters that may have been un-set as part of errors
         callParamCallbacks();
     }

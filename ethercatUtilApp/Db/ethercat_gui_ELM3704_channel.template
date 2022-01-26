@@ -176,5 +176,4 @@ record(stringin, "$(P):$(R):CH$(CHANNEL):STATUS")
     field(DTYP, "asynOctetRead")
     field(INP,  "@asyn($(LOGICPORT),0) CH$(CHANNEL):STATUS")
     field(SCAN, "I/O Intr")
-    field(VAL,  "OK")
 }
