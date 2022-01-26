@@ -4,7 +4,7 @@ major 4
 minor 0
 release 1
 x 648
-y 439
+y 476
 w 1135
 h 105
 font "arial-medium-r-12.0"
@@ -56,9 +56,7 @@ symbols {
 }
 replaceSymbols {
   0 1
-}
-propagateMacros {
-  0 0
+  1 1
 }
 noScroll
 endObjectProperties
@@ -158,9 +156,7 @@ symbols {
 }
 replaceSymbols {
   0 1
-}
-propagateMacros {
-  0 0
+  1 1
 }
 noScroll
 endObjectProperties
@@ -197,9 +193,7 @@ symbols {
 }
 replaceSymbols {
   0 1
-}
-propagateMacros {
-  0 0
+  1 1
 }
 noScroll
 endObjectProperties
@@ -236,9 +230,7 @@ symbols {
 }
 replaceSymbols {
   0 1
-}
-propagateMacros {
-  0 0
+  1 1
 }
 noScroll
 endObjectProperties

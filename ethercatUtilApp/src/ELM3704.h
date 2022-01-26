@@ -14,6 +14,7 @@
 
 #include "asynPortDriver.h"
 #include <asynPortClient.h>
+#include <alarm.h>
 
 
 class ELM3704 : public asynPortDriver {
@@ -76,10 +77,16 @@ private:
     // Method for reading current measurement settings (e.g. after interface change)
     asynStatus readCurrentChannelSubSettings(const unsigned int &channel);
 
+    // Method to call after changing measurement type
+    void setFirstSubTypeAfterTypeChanged(const unsigned int &channel, const int &value, const std::string &statusString);
+
     // Methods for handling asynParameter changes
     bool checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &value);
     bool checkIfMeasurementSubTypeChanged(const int &param, const epicsInt32 &value);
     bool checkIfScalerOptionChanged(const int &param, const epicsInt32 &value);
+
+    // Method for updating channel status string
+    void updateChannelStatusString(const unsigned int &channel, const std::string &string, const epicsAlarmSeverity &severity);
 
     // Variables
     asynPortClient sdoPortClient;
