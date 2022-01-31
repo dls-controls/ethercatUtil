@@ -1,4 +1,3 @@
 ASYN     = $(SUPPORT)/asyn/4-41
 CALC     = $(SUPPORT)/calc/3-7-3
-###ETHERCAT = $(SUPPORT)/ethercat/7-4-3
-ETHERCAT = /dls_sw/work/R3.14.12.7/support/ethercat
+ETHERCAT = $(SUPPORT)/ethercat/7-5-1
