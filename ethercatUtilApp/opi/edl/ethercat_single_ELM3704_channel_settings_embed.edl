@@ -3,8 +3,8 @@ beginScreenProperties
 major 4
 minor 0
 release 1
-x 1549
-y 466
+x 2561
+y 462
 w 400
 h 600
 font "arial-medium-r-12.0"
@@ -30,7 +30,7 @@ beginObjectProperties
 major 4
 minor 6
 release 0
-x 160
+x 190
 y 0
 w 135
 h 20
@@ -53,7 +53,7 @@ minor 0
 release 0
 x 0
 y 0
-w 150
+w 180
 h 20
 fgColor index 25
 bgColor index 3
@@ -73,7 +73,7 @@ minor 0
 release 0
 x 0
 y 25
-w 150
+w 180
 h 20
 fgColor index 25
 bgColor index 3
@@ -91,7 +91,7 @@ beginObjectProperties
 major 4
 minor 6
 release 0
-x 160
+x 190
 y 25
 w 135
 h 20
@@ -114,7 +114,7 @@ minor 0
 release 0
 x 0
 y 75
-w 150
+w 180
 h 20
 fgColor index 25
 bgColor index 3
@@ -132,7 +132,7 @@ beginObjectProperties
 major 4
 minor 6
 release 0
-x 160
+x 190
 y 75
 w 135
 h 20
@@ -154,7 +154,7 @@ major 4
 minor 6
 release 0
 x 0
-y 125
+y 160
 w 295
 h 20
 controlPv "$(P):$(R):CH$(CHANNEL):STATUS"
@@ -167,5 +167,46 @@ nullColor index 0
 useHexPrefix
 newPos
 objType "monitors"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 6
+release 0
+x 190
+y 125
+w 135
+h 20
+controlPv "$(P):$(R):CH$(CHANNEL):SENSOR_SUPPLY_RBV"
+font "arial-bold-r-12.0"
+fgColor index 16
+bgColor index 10
+limitsFromDb
+nullColor index 0
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 125
+w 180
+h 20
+fgColor index 25
+bgColor index 3
+inconsistentColor index 79
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(P):$(R):CH$(CHANNEL):SENSOR_SUPPLY"
+indicatorPv "$(P):$(R):CH$(CHANNEL):SENSOR_SUPPLY_RBV"
+font "arial-bold-r-12.0"
 endObjectProperties
 

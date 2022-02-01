@@ -151,13 +151,32 @@ record(calc, "$(P):$(R):CH$(CHANNEL):VAL")
     field(CALC, "A*B+C")
 }
 
+record(mbbo, "$(P):$(R):CH$(CHANNEL):SENSOR_SUPPLY")
+{
+    field(DESC, "Sensor supply voltage")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(LOGICPORT),0) CH$(CHANNEL):SENSOR_SUPPLY")
+    field(VAL,  "0")
+    field(ZRST, "N/A")
+    info(asyn:READBACK, "1")
+}
+
+record(mbbi, "$(P):$(R):CH$(CHANNEL):SENSOR_SUPPLY_RBV")
+{
+    field(DESC, "Sensor supply voltage")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(LOGICPORT),0) CH$(CHANNEL):SENSOR_SUPPLY")
+    field(SCAN, "I/O Intr")
+    field(ZRST, "N/A")
+}
+
 record(mbbo, "$(P):$(R):CH$(CHANNEL):SCALER")
 {
     field(DESC, "Measurement scaling")
     field(DTYP, "asynInt32")
     field(OUT,  "@asyn($(LOGICPORT),0) CH$(CHANNEL):SCALER")
     field(VAL,  "0")
-    field(ZRST, "None")
+    field(ZRST, "N/A")
     info(asyn:READBACK, "1")
 }
 
@@ -167,7 +186,7 @@ record(mbbi, "$(P):$(R):CH$(CHANNEL):SCALER_RBV")
     field(DTYP, "asynInt32")
     field(INP,  "@asyn($(LOGICPORT),0) CH$(CHANNEL):SCALER")
     field(SCAN, "I/O Intr")
-    field(ZRST, "None")
+    field(ZRST, "N/A")
 }
 
 record(stringin, "$(P):$(R):CH$(CHANNEL):STATUS")

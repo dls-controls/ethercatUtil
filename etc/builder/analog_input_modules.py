@@ -112,6 +112,13 @@ class ELM3704(AnalogInputModule):
             SdoEntryControl(entry_name, sdo_control_settings, asyn_parameter_name, description, subindex, bit_length)
 
             # Sensor supply 0x80n0:02
+            entry_name = settings_name + ":SensorSupply"
+            asyn_parameter_name = "{channel}:SensorSupply".format(channel=channel)
+            description = "{channel} sensor supply voltage".format(channel=channel)
+            subindex = 2
+            bit_length = 16
+            SdoEntryControl(entry_name, sdo_control_settings, asyn_parameter_name, description, subindex, bit_length)
+
 
             # RTD element 0x80n0:14
 

@@ -31,6 +31,7 @@ protected:
     int measurementType[4];
     int measurementSubType[4];
     int measurementTypeLoaded[4];
+    int measurementSensorSupply[4];
     int measurementScaler[4];
     int channelStatusMessage[4];
 
@@ -50,8 +51,12 @@ protected:
     };
 
 private:
+
+    // Generic method to write a single N/A option to MBBI/MBBO record via asynParameter
+    void writeNAOption(const int &param);
+
     // Methods for updating the MBBI/O subtype options
-    void writeNoneSubTypeOptions(const unsigned int &channel);
+    void writeNASubTypeOption(const unsigned int &channel);
     void writeVoltageSubTypeOptions(const unsigned int &channel);
     void writeCurrentSubTypeOptions(const unsigned int &channel);
     void writePotentiometerSubTypeOptions(const unsigned int &channel);
@@ -64,6 +69,8 @@ private:
     void writeRTDSubTypeOptions(const unsigned int &channel);
 
     // Methods for updating secondary settings
+    void writeNASensorSupplyOption(const unsigned int &channel);
+    void writeStrainGaugeSensorSupplyOptions(const unsigned int &channel);
     void writeDefaultScalerOptions(const unsigned int &channel);
     void writeThermocoupleScalerOptions(const unsigned int &channel);
 
@@ -72,9 +79,11 @@ private:
 
     // Methods for writing to the SDO port via the generic method above
     asynStatus setChannelInterface(const unsigned int &channel, const unsigned int &value);
+    asynStatus setChannelSensorSupply(const unsigned int &channel, const unsigned int &value);
     asynStatus setChannelScaler(const unsigned int &channel, const unsigned int &value);
 
-    // Method for reading current measurement settings (e.g. after interface change)
+    // Methods for reading current measurement settings (e.g. after interface change)
+    asynStatus readChannelSubSetting(const unsigned int &channel, const std::string &paramName, epicsInt32 &paramValue);
     asynStatus readCurrentChannelSubSettings(const unsigned int &channel);
 
     // Method to call after changing measurement type
@@ -83,6 +92,7 @@ private:
     // Methods for handling asynParameter changes
     bool checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &value);
     bool checkIfMeasurementSubTypeChanged(const int &param, const epicsInt32 &value);
+    bool checkIfSensorSupplyOptionChanged(const int &param, const epicsInt32 &value);
     bool checkIfScalerOptionChanged(const int &param, const epicsInt32 &value);
 
     // Method for updating channel status string
