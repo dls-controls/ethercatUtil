@@ -159,12 +159,8 @@ void ELM3704::writeThermocoupleSubTypeOptions(const unsigned int &channel)
     // Map values based to the corresponding 0x80n01:01 interface value
     static int values[3] = { 81, 86, 87 };
     static int severities[3] = { 0, 0, 0 };
-    // Set subtype parameter to first possible value
-    setIntegerParam(measurementSubType[channel], values[0]);
-    // Write first value to interface parameter of client SDO port
-    setChannelInterface(channel, values[0]);
-    // Update channel status string
-    updateChannelStatusString(channel, "Thermocouple set: " + std::string(strings[0]), epicsSevNone);
+    // Set interface to first valid subtype
+    setFirstSubTypeAfterTypeChanged(channel, values[0], "Thermocouple set: " + std::string(strings[0]));
     // Update strings and values
     doCallbacksEnum((char **)strings, values, severities, 3, measurementSubType[channel], 0);
 }
