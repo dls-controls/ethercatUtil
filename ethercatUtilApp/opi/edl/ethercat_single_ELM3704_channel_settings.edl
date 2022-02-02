@@ -4,9 +4,9 @@ major 4
 minor 0
 release 1
 x 846
-y 624
-w 400
-h 600
+y 661
+w 600
+h 450
 font "arial-medium-r-12.0"
 ctlFont "arial-medium-r-12.0"
 btnFont "arial-medium-r-12.0"
@@ -67,7 +67,7 @@ minor 1
 release 0
 x 5
 y 55
-w 370
+w 570
 h 325
 fgColor index 14
 bgColor index 0

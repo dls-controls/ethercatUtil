@@ -50,16 +50,10 @@ fixed-purpose module:
 
 * Test module with actual signals
 * Add support for configuring ELM3704 multi-purpose modules
-    * Add other interface types
     * Add secondary settings for specific interfaces
-        * Scaler (values depending on type, TC uses values 6-8 except in 80mV mode)
-        * Sensor supply for strain gauge
         * Thermocouple element
-        * RTD element
-    * Add openable EDM screen for secondary settings
-    * Add channel status string for capturing error messages (setting invalid parameters)
-    * Add handling of setting an invalid setting (reverting back)
-    * Add handling of other settings changing when interface changes
+    * Debug error from asynPortClient - create simulated asynPortDriver to talk to
+    * Refactor setChannelXXX functions into single method which accepts a parameter string and status message
 * Finalise EDM screen designs
 * Create CSS screens
 * Add optional logic for copying scale and offset values to an AreaDetector scale plugin
@@ -72,4 +66,9 @@ fixed-purpose module:
 * Add basic AsynPortDriver for ELM3704
     * Connects an AsynPortClient to the SDO port created from the SDO requests
     * Supports setting main interface setting for measurement type
+    * Added secondary screen for detailed settings
+        * Sensor supply
+        * Scaler
+        * RTD element
+        * Status string
 

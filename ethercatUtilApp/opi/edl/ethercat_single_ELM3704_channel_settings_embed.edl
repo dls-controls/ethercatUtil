@@ -4,8 +4,8 @@ major 4
 minor 0
 release 1
 x 2561
-y 462
-w 400
+y 499
+w 450
 h 600
 font "arial-medium-r-12.0"
 ctlFont "arial-medium-r-12.0"
@@ -24,15 +24,177 @@ snapToGrid
 gridSize 5
 endScreenProperties
 
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 255
+w 395
+h 65
+lineColor index 14
+fill
+fillColor index 5
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 185
+w 395
+h 40
+lineColor index 14
+fill
+fillColor index 5
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 115
+w 395
+h 40
+lineColor index 14
+fill
+fillColor index 5
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 95
+w 50
+h 20
+lineColor index 14
+fill
+fillColor index 5
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 5
+y 95
+w 45
+h 20
+font "arial-bold-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Scaler"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 165
+w 115
+h 20
+lineColor index 14
+fill
+fillColor index 5
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 5
+y 165
+w 110
+h 20
+font "arial-bold-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "SG sensor supply"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 0
+w 90
+h 20
+lineColor index 14
+fill
+fillColor index 5
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 5
+y 0
+w 85
+h 20
+font "arial-bold-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Measurement"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 20
+w 395
+h 65
+lineColor index 14
+fill
+fillColor index 5
+endObjectProperties
+
 # (Text Monitor)
 object activeXTextDspClass:noedit
 beginObjectProperties
 major 4
 minor 6
 release 0
-x 190
-y 0
-w 135
+x 210
+y 30
+w 180
 h 20
 controlPv "$(P):$(R):CH$(CHANNEL):TYPE_RBV"
 font "arial-bold-r-12.0"
@@ -51,9 +213,9 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 0
-y 0
-w 180
+x 5
+y 30
+w 195
 h 20
 fgColor index 25
 bgColor index 3
@@ -71,9 +233,9 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 0
-y 25
-w 180
+x 5
+y 55
+w 195
 h 20
 fgColor index 25
 bgColor index 3
@@ -91,9 +253,9 @@ beginObjectProperties
 major 4
 minor 6
 release 0
-x 190
-y 25
-w 135
+x 210
+y 55
+w 180
 h 20
 controlPv "$(P):$(R):CH$(CHANNEL):SUBTYPE_RBV"
 font "arial-bold-r-12.0"
@@ -112,9 +274,9 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 0
-y 75
-w 180
+x 5
+y 125
+w 195
 h 20
 fgColor index 25
 bgColor index 3
@@ -132,9 +294,9 @@ beginObjectProperties
 major 4
 minor 6
 release 0
-x 190
-y 75
-w 135
+x 210
+y 125
+w 180
 h 20
 controlPv "$(P):$(R):CH$(CHANNEL):SCALER_RBV"
 font "arial-bold-r-12.0"
@@ -154,8 +316,8 @@ major 4
 minor 6
 release 0
 x 0
-y 160
-w 295
+y 335
+w 395
 h 20
 controlPv "$(P):$(R):CH$(CHANNEL):STATUS"
 font "arial-bold-r-12.0"
@@ -175,9 +337,9 @@ beginObjectProperties
 major 4
 minor 6
 release 0
-x 190
-y 125
-w 135
+x 210
+y 195
+w 180
 h 20
 controlPv "$(P):$(R):CH$(CHANNEL):SENSOR_SUPPLY_RBV"
 font "arial-bold-r-12.0"
@@ -196,9 +358,9 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 0
-y 125
-w 180
+x 5
+y 195
+w 195
 h 20
 fgColor index 25
 bgColor index 3
@@ -208,5 +370,100 @@ botShadowColor index 11
 controlPv "$(P):$(R):CH$(CHANNEL):SENSOR_SUPPLY"
 indicatorPv "$(P):$(R):CH$(CHANNEL):SENSOR_SUPPLY_RBV"
 font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 6
+release 0
+x 210
+y 290
+w 180
+h 20
+controlPv "$(P):$(R):CH$(CHANNEL):RTD_ELEMENT_RBV"
+font "arial-bold-r-12.0"
+fgColor index 16
+bgColor index 10
+limitsFromDb
+nullColor index 0
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 5
+y 290
+w 195
+h 20
+fgColor index 25
+bgColor index 3
+inconsistentColor index 79
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(P):$(R):CH$(CHANNEL):RTD_ELEMENT"
+indicatorPv "$(P):$(R):CH$(CHANNEL):RTD_ELEMENT_RBV"
+font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 5
+y 265
+w 50
+h 20
+fgColor index 25
+bgColor index 3
+inconsistentColor index 79
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(P):$(R):CH$(CHANNEL):RTD_PAGE"
+indicatorPv "$(P):$(R):CH$(CHANNEL):RTD_PAGE_RBV"
+font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 235
+w 85
+h 20
+lineColor index 14
+fill
+fillColor index 5
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 5
+y 235
+w 80
+h 20
+font "arial-bold-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "RTD element"
+}
 endObjectProperties
 

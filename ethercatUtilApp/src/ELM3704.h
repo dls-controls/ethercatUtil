@@ -32,6 +32,9 @@ protected:
     int measurementSubType[4];
     int measurementTypeLoaded[4];
     int measurementSensorSupply[4];
+    int measurementRTDElementPage[4];
+    int measurementRTDElement[4];
+    int measurementTCElement[4];
     int measurementScaler[4];
     int channelStatusMessage[4];
 
@@ -55,7 +58,7 @@ private:
     // Generic method to write a single N/A option to MBBI/MBBO record via asynParameter
     void writeNAOption(const int &param);
 
-    // Methods for updating the MBBI/O subtype options
+    // Methods for updating the MBBI/O subtype options when changing core type
     void writeNASubTypeOption(const unsigned int &channel);
     void writeVoltageSubTypeOptions(const unsigned int &channel);
     void writeCurrentSubTypeOptions(const unsigned int &channel);
@@ -71,6 +74,12 @@ private:
     // Methods for updating secondary settings
     void writeNASensorSupplyOption(const unsigned int &channel);
     void writeStrainGaugeSensorSupplyOptions(const unsigned int &channel);
+    void writeNARTDElementPageOption(const unsigned int &channel);
+    void writeRTDElementPageOptions(const unsigned int &channel);
+    void writeNARTDElementOption(const unsigned int &channel);
+    void writeRTDElementOptions(const unsigned int &channel, const unsigned int &page = 1);
+    void writeNATCElementOption(const unsigned int &channel);
+    //void writeTCElementOptions(const unsigned int &channel); 
     void writeDefaultScalerOptions(const unsigned int &channel);
     void writeThermocoupleScalerOptions(const unsigned int &channel);
 
@@ -80,6 +89,8 @@ private:
     // Methods for writing to the SDO port via the generic method above
     asynStatus setChannelInterface(const unsigned int &channel, const unsigned int &value);
     asynStatus setChannelSensorSupply(const unsigned int &channel, const unsigned int &value);
+    asynStatus setChannelRTDElement(const unsigned int &channel, const unsigned int &value);
+    asynStatus setChannelTCElement(const unsigned int &channel, const unsigned int &value);
     asynStatus setChannelScaler(const unsigned int &channel, const unsigned int &value);
 
     // Methods for reading current measurement settings (e.g. after interface change)
@@ -93,6 +104,8 @@ private:
     bool checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &value);
     bool checkIfMeasurementSubTypeChanged(const int &param, const epicsInt32 &value);
     bool checkIfSensorSupplyOptionChanged(const int &param, const epicsInt32 &value);
+    bool checkIfRTDPageChanged(const int &param, const epicsInt32 &value);
+    bool checkIfRTDOptionChanged(const int &param, const epicsInt32 &value);
     bool checkIfScalerOptionChanged(const int &param, const epicsInt32 &value);
 
     // Method for updating channel status string

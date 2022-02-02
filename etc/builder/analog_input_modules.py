@@ -119,10 +119,21 @@ class ELM3704(AnalogInputModule):
             bit_length = 16
             SdoEntryControl(entry_name, sdo_control_settings, asyn_parameter_name, description, subindex, bit_length)
 
-
             # RTD element 0x80n0:14
+            entry_name = settings_name + ":RTDElement"
+            asyn_parameter_name = "{channel}:RTDElement".format(channel=channel)
+            description = "{channel} RTD element".format(channel=channel)
+            subindex = 20
+            bit_length = 16
+            SdoEntryControl(entry_name, sdo_control_settings, asyn_parameter_name, description, subindex, bit_length)
 
             # TC element 0x80n0:15
+            entry_name = settings_name + ":TCElement"
+            asyn_parameter_name = "{channel}:TCElement".format(channel=channel)
+            description = "{channel} TC element".format(channel=channel)
+            subindex = 21
+            bit_length = 16
+            SdoEntryControl(entry_name, sdo_control_settings, asyn_parameter_name, description, subindex, bit_length)
 
             # Scaler 0x80n0:2E
             entry_name = settings_name + ":Scaler"
