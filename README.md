@@ -50,10 +50,9 @@ fixed-purpose module:
 
 * Test module with actual signals
 * Add support for configuring ELM3704 multi-purpose modules
-    * Add secondary settings for specific interfaces
-        * Thermocouple element
     * Debug error from asynPortClient - create simulated asynPortDriver to talk to
     * Refactor setChannelXXX functions into single method which accepts a parameter string and status message
+    * Create SdoPortClient class for handling communication with SDO port
 * Finalise EDM screen designs
 * Create CSS screens
 * Add optional logic for copying scale and offset values to an AreaDetector scale plugin
@@ -70,5 +69,6 @@ fixed-purpose module:
         * Sensor supply
         * Scaler
         * RTD element
+        * TC element
         * Status string
 
