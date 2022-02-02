@@ -5,8 +5,8 @@ minor 0
 release 1
 x 2561
 y 499
-w 450
-h 600
+w 396
+h 450
 font "arial-medium-r-12.0"
 ctlFont "arial-medium-r-12.0"
 btnFont "arial-medium-r-12.0"
@@ -31,7 +31,7 @@ major 4
 minor 0
 release 0
 x 0
-y 255
+y 350
 w 395
 h 65
 lineColor index 14
@@ -316,7 +316,7 @@ major 4
 minor 6
 release 0
 x 0
-y 335
+y 430
 w 395
 h 20
 controlPv "$(P):$(R):CH$(CHANNEL):STATUS"
@@ -379,6 +379,116 @@ major 4
 minor 6
 release 0
 x 210
+y 385
+w 180
+h 20
+controlPv "$(P):$(R):CH$(CHANNEL):TC_ELEMENT_RBV"
+font "arial-bold-r-12.0"
+fgColor index 16
+bgColor index 10
+limitsFromDb
+nullColor index 0
+useHexPrefix
+newPos
+objType "monitors"
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 5
+y 385
+w 195
+h 20
+fgColor index 25
+bgColor index 3
+inconsistentColor index 79
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(P):$(R):CH$(CHANNEL):TC_ELEMENT"
+indicatorPv "$(P):$(R):CH$(CHANNEL):TC_ELEMENT_RBV"
+font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Menu Button)
+object activeMenuButtonClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 45
+y 360
+w 50
+h 20
+fgColor index 25
+bgColor index 3
+inconsistentColor index 79
+topShadowColor index 1
+botShadowColor index 11
+controlPv "$(P):$(R):CH$(CHANNEL):TC_PAGE"
+indicatorPv "$(P):$(R):CH$(CHANNEL):TC_PAGE_RBV"
+font "arial-bold-r-12.0"
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 330
+w 85
+h 20
+lineColor index 14
+fill
+fillColor index 5
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 5
+y 330
+w 80
+h 20
+font "arial-bold-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "TC element"
+}
+endObjectProperties
+
+# (Rectangle)
+object activeRectangleClass
+beginObjectProperties
+major 4
+minor 0
+release 0
+x 0
+y 255
+w 395
+h 65
+lineColor index 14
+fill
+fillColor index 5
+endObjectProperties
+
+# (Text Monitor)
+object activeXTextDspClass:noedit
+beginObjectProperties
+major 4
+minor 6
+release 0
+x 210
 y 290
 w 180
 h 20
@@ -419,7 +529,7 @@ beginObjectProperties
 major 4
 minor 0
 release 0
-x 5
+x 45
 y 265
 w 50
 h 20
@@ -464,6 +574,44 @@ bgColor index 0
 useDisplayBg
 value {
   "RTD element"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 5
+y 265
+w 35
+h 20
+font "arial-bold-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Page"
+}
+endObjectProperties
+
+# (Static Text)
+object activeXTextClass
+beginObjectProperties
+major 4
+minor 1
+release 1
+x 5
+y 360
+w 35
+h 20
+font "arial-bold-r-12.0"
+fgColor index 14
+bgColor index 0
+useDisplayBg
+value {
+  "Page"
 }
 endObjectProperties
 

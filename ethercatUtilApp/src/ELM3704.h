@@ -34,6 +34,7 @@ protected:
     int measurementSensorSupply[4];
     int measurementRTDElementPage[4];
     int measurementRTDElement[4];
+    int measurementTCElementPage[4];
     int measurementTCElement[4];
     int measurementScaler[4];
     int channelStatusMessage[4];
@@ -78,8 +79,10 @@ private:
     void writeRTDElementPageOptions(const unsigned int &channel);
     void writeNARTDElementOption(const unsigned int &channel);
     void writeRTDElementOptions(const unsigned int &channel, const unsigned int &page = 1);
+    void writeNATCElementPageOption(const unsigned int &channel);
+    void writeTCElementPageOptions(const unsigned int &channel);
     void writeNATCElementOption(const unsigned int &channel);
-    //void writeTCElementOptions(const unsigned int &channel); 
+    void writeTCElementOptions(const unsigned int &channel, const unsigned int &page = 1);
     void writeDefaultScalerOptions(const unsigned int &channel);
     void writeThermocoupleScalerOptions(const unsigned int &channel);
 
@@ -106,6 +109,8 @@ private:
     bool checkIfSensorSupplyOptionChanged(const int &param, const epicsInt32 &value);
     bool checkIfRTDPageChanged(const int &param, const epicsInt32 &value);
     bool checkIfRTDOptionChanged(const int &param, const epicsInt32 &value);
+    bool checkIfTCPageChanged(const int &param, const epicsInt32 &value);
+    bool checkIfTCOptionChanged(const int &param, const epicsInt32 &value);
     bool checkIfScalerOptionChanged(const int &param, const epicsInt32 &value);
 
     // Method for updating channel status string

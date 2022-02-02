@@ -208,6 +208,44 @@ record(mbbi, "$(P):$(R):CH$(CHANNEL):RTD_ELEMENT_RBV")
     field(ZRST, "N/A")
 }
 
+record(mbbo, "$(P):$(R):CH$(CHANNEL):TC_PAGE")
+{
+    field(DESC, "TC element page")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(LOGICPORT),0) CH$(CHANNEL):TC_ELEMENT_PAGE")
+    field(VAL,  "0")
+    field(ZRST, "N/A")
+    info(asyn:READBACK, "1")
+}
+
+record(mbbi, "$(P):$(R):CH$(CHANNEL):TC_PAGE_RBV")
+{
+    field(DESC, "TC element page")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(LOGICPORT),0) CH$(CHANNEL):TC_ELEMENT_PAGE")
+    field(SCAN, "I/O Intr")
+    field(ZRST, "N/A")
+}
+
+record(mbbo, "$(P):$(R):CH$(CHANNEL):TC_ELEMENT")
+{
+    field(DESC, "TC element")
+    field(DTYP, "asynInt32")
+    field(OUT,  "@asyn($(LOGICPORT),0) CH$(CHANNEL):TC_ELEMENT")
+    field(VAL,  "0")
+    field(ZRST, "N/A")
+    info(asyn:READBACK, "1")
+}
+
+record(mbbi, "$(P):$(R):CH$(CHANNEL):TC_ELEMENT_RBV")
+{
+    field(DESC, "TC element")
+    field(DTYP, "asynInt32")
+    field(INP,  "@asyn($(LOGICPORT),0) CH$(CHANNEL):TC_ELEMENT")
+    field(SCAN, "I/O Intr")
+    field(ZRST, "N/A")
+}
+
 record(mbbo, "$(P):$(R):CH$(CHANNEL):SCALER")
 {
     field(DESC, "Measurement scaling")

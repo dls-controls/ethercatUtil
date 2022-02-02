@@ -41,15 +41,21 @@ ELM3704::ELM3704(const char* portName, const char* sdoPortName) : asynPortDriver
         epicsSnprintf(str, NBUFF, "CH%d:LOADED", ch+1);
         createParam(str, asynParamInt32, &measurementTypeLoaded[ch]);
 
+        // Measurement sensor supply
+        epicsSnprintf(str, NBUFF, "CH%d:SENSOR_SUPPLY", ch+1);
+        createParam(str, asynParamInt32, &measurementSensorSupply[ch]);
+
         // RTD element
         epicsSnprintf(str, NBUFF, "CH%d:RTD_ELEMENT_PAGE", ch+1);
         createParam(str, asynParamInt32, &measurementRTDElementPage[ch]);
         epicsSnprintf(str, NBUFF, "CH%d:RTD_ELEMENT", ch+1);
         createParam(str, asynParamInt32, &measurementRTDElement[ch]);
 
-        // Measurement sensor supply
-        epicsSnprintf(str, NBUFF, "CH%d:SENSOR_SUPPLY", ch+1);
-        createParam(str, asynParamInt32, &measurementSensorSupply[ch]);
+        // TC element
+        epicsSnprintf(str, NBUFF, "CH%d:TC_ELEMENT_PAGE", ch+1);
+        createParam(str, asynParamInt32, &measurementTCElementPage[ch]);
+        epicsSnprintf(str, NBUFF, "CH%d:TC_ELEMENT", ch+1);
+        createParam(str, asynParamInt32, &measurementTCElement[ch]);
 
         // Measurement scaler
         epicsSnprintf(str, NBUFF, "CH%d:SCALER", ch+1);
@@ -358,7 +364,7 @@ void ELM3704::writeStrainGaugeSensorSupplyOptions(const unsigned int &channel)
 }
 
 
-// Empty the sensor supply options list
+// Empty the RTD page options list
 void ELM3704::writeNARTDElementPageOption(const unsigned int &channel)
 {
     // Set options
@@ -368,7 +374,7 @@ void ELM3704::writeNARTDElementPageOption(const unsigned int &channel)
 }
 
 
-// Write the sensor supply options for strain gauge measurements
+// Write the RTD page options
 void ELM3704::writeRTDElementPageOptions(const unsigned int &channel)
 {
     static const char *strings[3] = {
@@ -466,7 +472,7 @@ void ELM3704::writeRTDElementOptions(const unsigned int &channel, const unsigned
             doCallbacksEnum((char **)thirdPageStrings, thirdPageValues, severities, 4, measurementRTDElement[channel], 0);
             break;
         default:
-            printf("ERROR: invalid RTD element page %d for channel %d\n", page, channel); 
+            printf("ERROR: invalid RTD element page %d for channel %d\n", page, channel);
             break;
     }
     // Update the asyn parameter to the first value on the page
@@ -478,12 +484,98 @@ void ELM3704::writeRTDElementOptions(const unsigned int &channel, const unsigned
 }
 
 
+// Empty the TC page options list
+void ELM3704::writeNATCElementPageOption(const unsigned int &channel)
+{
+    // Set options
+    writeNAOption(measurementTCElementPage[channel]);
+    // Update parameter
+    setIntegerParam(measurementTCElementPage[channel], 0);
+}
+
+
+// Write the TC page options
+void ELM3704::writeTCElementPageOptions(const unsigned int &channel)
+{
+    static const char *strings[2] = {
+        "1",
+        "2",
+    };
+    // Map values based to the corresponding 0x80n01:02 sensor supply value
+    static int values[2] = { 1, 2 };
+    static int severities[2] = { 0, 0 };
+    // Update strings and values
+    doCallbacksEnum((char **)strings, values, severities, 2, measurementTCElementPage[channel], 0);
+}
+
+
 // Empty the TC element options list
 void ELM3704::writeNATCElementOption(const unsigned int &channel)
 {
     // Set options
     writeNAOption(measurementTCElement[channel]);
-} 
+}
+
+// Write the TC element options list
+void ELM3704::writeTCElementOptions(const unsigned int &channel, const unsigned int &page)
+{
+    static const char *firstPageStrings[16] = {
+        "None",
+        "K (-270..1372C)",
+        "J (-210..1200C)",
+        "L (-50..900C)",
+        "E (-270..1000C)",
+        "T (-270..400C)",
+        "N (-270..1300C)",
+        "U (-50..600C)",
+        "B (200..1820C)",
+        "R (-50..1768C)",
+        "S (-50..1768C)",
+        "C (0..2320C)",
+        "D (0..2490C)",
+        "G (1000..2300C)",
+        "P (PLII 0..1395C)",
+        "Au/Pt (0..1000C)",
+    };
+    static const char *secondPageStrings[4] = {
+        "Pt/Pd (0..1000C)",
+        "A-1 (0..2500C)",
+        "A-2 (0..1800C)",
+        "A-3 (0..1800C)",
+    };
+
+    // Map values based to the corresponding 0x80n01:14 scaler value
+    static int firstPageValues[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16 };
+    static int secondPageValues[4] = { 17, 18, 19, 20 };
+    static int severities[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    // Update strings and values
+    epicsInt32 value = 0;
+    std::string elementString = std::string("TC element type changed to: ");
+    switch (page)
+    {
+        case 1:
+            printf("Writing 1st page TC element options for channel %d\n", channel);
+            value = firstPageValues[0];
+            elementString += firstPageStrings[0];
+            doCallbacksEnum((char **)firstPageStrings, firstPageValues, severities, 16, measurementTCElement[channel], 0);
+            break;
+        case 2:
+            printf("Writing 2nd page TC element options for channel %d\n", channel);
+            value = secondPageValues[0];
+            elementString += secondPageStrings[0];
+            doCallbacksEnum((char **)secondPageStrings, secondPageValues, severities, 4, measurementTCElement[channel], 0);
+            break;
+        default:
+            printf("ERROR: invalid TC element page %d for channel %d\n", page, channel);
+            break;
+    }
+    // Update the asyn parameter to the first value on the page
+    setIntegerParam(measurementTCElement[channel], value);
+    // Write the interface value to the SDO port
+    setChannelRTDElement(channel, value);
+    // Update the channel status string
+    updateChannelStatusString(channel, elementString , epicsSevNone);
+}
 
 // Write default scaler options
 void ELM3704::writeDefaultScalerOptions(const unsigned int &channel)
@@ -704,6 +796,13 @@ asynStatus ELM3704::readCurrentChannelSubSettings(const unsigned int &channel)
     }
     else status = asynError;
 
+    // TC element
+    if (readChannelSubSetting(channel, "TCElement", parameterValue) == asynSuccess)
+    {
+        setIntegerParam(measurementTCElement[channel], parameterValue);
+    }
+    else status = asynError;
+
     // Scaler
     if (readChannelSubSetting(channel, "Scaler", parameterValue) == asynSuccess)
     {
@@ -731,6 +830,7 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
              *   - Measurement subtype
              *   - Sensor type options
              *   - RTD element options
+             *   - TC element
              *   - Scaler options
              */
             switch (value)
@@ -741,6 +841,8 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                     writeNASensorSupplyOption(ch);
                     writeNARTDElementPageOption(ch);
                     writeNARTDElementOption(ch);
+                    writeNATCElementPageOption(ch);
+                    writeNATCElementOption(ch);
                     writeDefaultScalerOptions(ch);
                     break;
 
@@ -750,6 +852,8 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                     writeNASensorSupplyOption(ch);
                     writeNARTDElementPageOption(ch);
                     writeNARTDElementOption(ch);
+                    writeNATCElementPageOption(ch);
+                    writeNATCElementOption(ch);
                     writeDefaultScalerOptions(ch);
                     break;
 
@@ -759,6 +863,8 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                     writeNASensorSupplyOption(ch);
                     writeNARTDElementPageOption(ch);
                     writeNARTDElementOption(ch);
+                    writeNATCElementPageOption(ch);
+                    writeNATCElementOption(ch);
                     writeDefaultScalerOptions(ch);
                     break;
 
@@ -768,6 +874,8 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                     writeNASensorSupplyOption(ch);
                     writeNARTDElementPageOption(ch);
                     writeNARTDElementOption(ch);
+                    writeNATCElementPageOption(ch);
+                    writeNATCElementOption(ch);
                     writeDefaultScalerOptions(ch);
                     break;
 
@@ -777,6 +885,8 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                     writeNASensorSupplyOption(ch);
                     writeNARTDElementPageOption(ch);
                     writeNARTDElementOption(ch);
+                    writeTCElementPageOptions(ch);
+                    writeTCElementOptions(ch);
                     writeThermocoupleScalerOptions(ch);
                     break;
 
@@ -786,6 +896,8 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                     writeNASensorSupplyOption(ch);
                     writeNARTDElementPageOption(ch);
                     writeNARTDElementOption(ch);
+                    writeNATCElementPageOption(ch);
+                    writeNATCElementOption(ch);
                     writeDefaultScalerOptions(ch);
                     break;
 
@@ -795,6 +907,8 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                     writeStrainGaugeSensorSupplyOptions(ch);
                     writeNARTDElementPageOption(ch);
                     writeNARTDElementOption(ch);
+                    writeNATCElementPageOption(ch);
+                    writeNATCElementOption(ch);
                     writeDefaultScalerOptions(ch);
                     break;
 
@@ -804,6 +918,8 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                     writeStrainGaugeSensorSupplyOptions(ch);
                     writeNARTDElementPageOption(ch);
                     writeNARTDElementOption(ch);
+                    writeNATCElementPageOption(ch);
+                    writeNATCElementOption(ch);
                     writeDefaultScalerOptions(ch);
                     break;
 
@@ -813,6 +929,8 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                     writeStrainGaugeSensorSupplyOptions(ch);
                     writeNARTDElementPageOption(ch);
                     writeNARTDElementOption(ch);
+                    writeNATCElementPageOption(ch);
+                    writeNATCElementOption(ch);
                     writeDefaultScalerOptions(ch);
                     break;
 
@@ -822,6 +940,8 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                     writeStrainGaugeSensorSupplyOptions(ch);
                     writeNARTDElementPageOption(ch);
                     writeNARTDElementOption(ch);
+                    writeNATCElementPageOption(ch);
+                    writeNATCElementOption(ch);
                     writeDefaultScalerOptions(ch);
                     break;
 
@@ -831,6 +951,8 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                     writeNASensorSupplyOption(ch);
                     writeRTDElementPageOptions(ch);
                     writeRTDElementOptions(ch);
+                    writeNATCElementPageOption(ch);
+                    writeNATCElementOption(ch);
                     writeDefaultScalerOptions(ch);
                     break;
 
@@ -926,6 +1048,42 @@ bool ELM3704::checkIfRTDOptionChanged(const int &param, const epicsInt32 &value)
     return false;
 }
 
+
+// Check and handle changes to the TC page
+bool ELM3704::checkIfTCPageChanged(const int &param, const epicsInt32 &value)
+{
+    for (unsigned int ch=0; ch<4; ch++)
+    {
+        if (param == measurementTCElementPage[ch])
+        {
+            // Set the loaded parameter to loading for GUI update
+            setIntegerParam(measurementTypeLoaded[ch], 1);
+            callParamCallbacks();
+            printf("Channel %d TC element page changed to %d\n", ch, value);
+            writeTCElementOptions(ch, value);
+            setIntegerParam(measurementTypeLoaded[ch], 0);
+            return true;
+        }
+    }
+    return false;
+}
+
+
+// Check and handle changes to the RTD option
+bool ELM3704::checkIfTCOptionChanged(const int &param, const epicsInt32 &value)
+{
+    for (unsigned int ch=0; ch<4; ch++)
+    {
+        if (param == measurementTCElement[ch])
+        {
+            printf("Channel %d TC element option changed to %d\n", ch, value);
+            setChannelTCElement(ch, value);
+            return true;
+        }
+    }
+    return false;
+}
+
 // Check and handle changes to the scaler option
 bool ELM3704::checkIfScalerOptionChanged(const int &param, const epicsInt32 &value)
 {
@@ -965,6 +1123,8 @@ asynStatus ELM3704::writeInt32(asynUser *pasynUser, epicsInt32 value)
         else if (checkIfMeasurementSubTypeChanged(param, value)) {}
         else if (checkIfRTDPageChanged(param, value)) {}
         else if (checkIfRTDOptionChanged(param, value)) {}
+        else if (checkIfTCPageChanged(param, value)) {}
+        else if (checkIfTCOptionChanged(param, value)) {}
         else if (checkIfScalerOptionChanged(param, value)) {}
         else
         {
