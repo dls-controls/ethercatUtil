@@ -22,7 +22,7 @@ ELM3704::ELM3704(const char* portName, const char* sdoPortName) : asynPortDriver
     1, /* Autoconnect */
     0, /* Default priority */
     0), /* Default stack size*/
-    sdoPortClient(sdoPortName, 1.0) /* Connect our client to the SDO asyn port */
+    sdoPortClient(sdoPortName) /* Create SdoPortClient instance */
 {
     /* Asyn parameter creation */
 
@@ -610,73 +610,12 @@ void ELM3704::writeThermocoupleScalerOptions(const unsigned int &channel)
 }
 
 
-// Generic wrapper method for writing to SDO port via asynPortClient
-asynStatus ELM3704::writeInt32SdoPortClient(const std::string &paramName, const epicsInt32 &value)
-{
-    asynStatus status = sdoPortClient.write(paramName, value);
-
-    // Check status
-    if (status)
-    {
-        printf("ERROR: failed to set asynPortClient parameter %s to value %d\n", paramName.c_str(), value);
-    }
-    else
-    {
-        // Poll the readback until it matches or we time out
-        epicsInt32 readbackValue;
-        double parameterSetTime = 0.0;
-        static const double paramaterSetTimeout = 5.0;
-        static const double parameterPollInterval = 0.1;
-        asynStatus readStatus = sdoPortClient.read(paramName, &readbackValue);
-        if (readStatus)
-        {
-            printf(
-                "ERROR: could not read asynPortClient parameter %s (status %d)\n",
-                paramName.c_str(),
-                readStatus
-            );
-        }
-        else
-        {
-            // Readback value doesn't match, wait and see if it updates
-            while (readbackValue != value)
-            {
-                epicsThreadSleep(parameterPollInterval);
-                readStatus = sdoPortClient.read(paramName, &readbackValue);
-                parameterSetTime += parameterPollInterval;
-
-                // Check if we exceed a timeout limit
-                if (parameterSetTime > paramaterSetTimeout)
-                {
-                    // Throw an exception which should be caught by writeInt32
-                    throw std::runtime_error("ERROR: timeout waiting for " + paramName + " to update");
-                }
-                else if (readStatus)
-                {
-                    // TODO: check if we should throw a custom error here and set status message
-                    printf("ERROR: could not read asynPortClient parameter %s\n", paramName.c_str());
-                    break;
-                }
-            }
-            printf(
-                "Set asynPortClient parameter %s to value %d (%d) after %fs\n",
-                paramName.c_str(),
-                value,
-                readbackValue,
-                parameterSetTime
-            );
-        }
-    }
-    return status;
-}
-
-
 // Change the Interface value of a channel via the asynPortClient
 asynStatus ELM3704::setChannelInterface(const unsigned int &channel, const unsigned int &value)
 {
     // Add one to channel as the asyn parameter is numbered 1-4
     std::string parameterString = "CH" + std::to_string(channel+1) + ":Interface";
-    asynStatus status = writeInt32SdoPortClient(parameterString, (epicsInt32) value);
+    asynStatus status = sdoPortClient.writeRead(parameterString, (epicsInt32) value);
 
     // When we change interface we also need to check if sub-settings change based on
     // allowed values
@@ -694,7 +633,7 @@ asynStatus ELM3704::setChannelSensorSupply(const unsigned int &channel, const un
 {
     // Add one to channel as the asyn parameter is numbered 1-4
     std::string parameterString = "CH" + std::to_string(channel+1) + ":SensorSupply";
-    asynStatus status = writeInt32SdoPortClient(parameterString, (epicsInt32) value);
+    asynStatus status = sdoPortClient.writeRead(parameterString, (epicsInt32) value);
 
     // Set channel status string
     updateChannelStatusString(channel, "Updated sensor supply", epicsSevNone);
@@ -708,7 +647,7 @@ asynStatus ELM3704::setChannelRTDElement(const unsigned int &channel, const unsi
 {
     // Add one to channel as the asyn parameter is numbered 1-4
     std::string parameterString = "CH" + std::to_string(channel+1) + ":RTDElement";
-    asynStatus status = writeInt32SdoPortClient(parameterString, (epicsInt32) value);
+    asynStatus status = sdoPortClient.writeRead(parameterString, (epicsInt32) value);
 
     // Set channel status string
     updateChannelStatusString(channel, "Updated RTD element", epicsSevNone);
@@ -722,7 +661,7 @@ asynStatus ELM3704::setChannelTCElement(const unsigned int &channel, const unsig
 {
     // Add one to channel as the asyn parameter is numbered 1-4
     std::string parameterString = "CH" + std::to_string(channel+1) + ":TCElement";
-    asynStatus status = writeInt32SdoPortClient(parameterString, (epicsInt32) value);
+    asynStatus status = sdoPortClient.writeRead(parameterString, (epicsInt32) value);
 
     // Set channel status string
     updateChannelStatusString(channel, "Updated TC element", epicsSevNone);
@@ -740,7 +679,7 @@ asynStatus ELM3704::setChannelScaler(const unsigned int &channel, const unsigned
     std::string parameterString = "CH" + std::to_string(channel+1) + ":Scaler";
     try
     {
-        status = writeInt32SdoPortClient(parameterString, (epicsInt32) value);
+        status = sdoPortClient.writeRead(parameterString, (epicsInt32) value);
     } catch (const std::runtime_error &e)
     {
         // Update to bad channel status message and rethrow exception
@@ -758,16 +697,11 @@ asynStatus ELM3704::setChannelScaler(const unsigned int &channel, const unsigned
 asynStatus ELM3704::readChannelSubSetting(const unsigned int &channel, const std::string &paramName, epicsInt32 &paramValue)
 {
     std::string paramString = "CH" + std::to_string(channel+1) + ":" + paramName;
-    asynStatus status = sdoPortClient.read(paramString, &paramValue);
+    asynStatus status = sdoPortClient.read(paramString, paramValue);
     if (status)
     {
-        printf(
-            "Unable to read channel %d parameter %s (status %d, value %d)\n",
-            channel,
-            paramName.c_str(),
-            status,
-            paramValue);
-        status = sdoPortClient.write(paramString, 0);
+        // TODO: may be needed if we cannot read back the asyn parameter values
+        // status = sdoPortClient.write(paramString, 0);
     }
     return status;
 }

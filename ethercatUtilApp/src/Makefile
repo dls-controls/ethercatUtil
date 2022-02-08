@@ -21,6 +21,7 @@ ethercatUtil_DBD += ethercatUtilRegister.dbd
 
 # Source code
 ethercatUtil_SRCS += ELM3704.cpp
+ethercatUtil_SRCS += SdoPortClient.cpp
 
 # Library dependencies
 ethercatUtil_LIBS += asyn

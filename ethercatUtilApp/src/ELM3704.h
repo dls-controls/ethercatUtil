@@ -13,11 +13,12 @@
 
 
 #include "asynPortDriver.h"
-#include <asynPortClient.h>
+#include "SdoPortClient.h"
 #include <alarm.h>
 
 
-class ELM3704 : public asynPortDriver {
+class ELM3704 : public asynPortDriver
+{
 
 public:
     // Constructor
@@ -86,6 +87,7 @@ private:
     void writeDefaultScalerOptions(const unsigned int &channel);
     void writeThermocoupleScalerOptions(const unsigned int &channel);
 
+    /* THESE FUNCTIONS SHOULD BE REFACTORED INTO SEPARATE CLASS */
     // Generic methods for writing to the SDO port via asynPortClient
     asynStatus writeInt32SdoPortClient(const std::string &paramName, const epicsInt32 &value);
 
@@ -99,6 +101,8 @@ private:
     // Methods for reading current measurement settings (e.g. after interface change)
     asynStatus readChannelSubSetting(const unsigned int &channel, const std::string &paramName, epicsInt32 &paramValue);
     asynStatus readCurrentChannelSubSettings(const unsigned int &channel);
+
+    /* END OF FUNCTIONS */
 
     // Method to call after changing measurement type
     void setFirstSubTypeAfterTypeChanged(const unsigned int &channel, const int &value, const std::string &statusString);
@@ -117,7 +121,7 @@ private:
     void updateChannelStatusString(const unsigned int &channel, const std::string &string, const epicsAlarmSeverity &severity);
 
     // asynPortClient to talk to the SDO port when setting channel parameters
-    asynPortClient sdoPortClient;
+    SdoPortClient sdoPortClient;
 
 };
 
