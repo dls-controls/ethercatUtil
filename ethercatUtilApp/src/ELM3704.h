@@ -92,6 +92,7 @@ private:
     asynStatus writeInt32SdoPortClient(const std::string &paramName, const epicsInt32 &value);
 
     // Methods for writing to the SDO port via the generic method above
+    asynStatus setChannelParameter(const unsigned int &channel, const std::string &paramName, const unsigned int &value);
     asynStatus setChannelInterface(const unsigned int &channel, const unsigned int &value);
     asynStatus setChannelSensorSupply(const unsigned int &channel, const unsigned int &value);
     asynStatus setChannelRTDElement(const unsigned int &channel, const unsigned int &value);

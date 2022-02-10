@@ -73,8 +73,6 @@ ELM3704::ELM3704(const char* portName, const char* sdoPortName) : asynPortDriver
         // TODO: get current parameter values and set interface options appropriately
     }
 
-    printf("Statuses: %d, %d, %d, %d, %d\n", asynError, asynDisconnected, asynDisabled, asynParamBadIndex, asynParamUndefined);
-
 }
 
 
@@ -608,19 +606,38 @@ void ELM3704::writeThermocoupleScalerOptions(const unsigned int &channel)
 }
 
 
+// Set the parameter of a channel via the asynPortClient
+asynStatus ELM3704::setChannelParameter(const unsigned int &channel, const std::string &paramName, const unsigned int &value)
+{
+    asynStatus status;
+
+    // Add one to channel as the asyn parameter is numbered 1-4
+    std::string parameterString = "CH" + std::to_string(channel+1) + ":" + paramName;
+    try
+    {
+        status = sdoPortClient.writeRead(parameterString, (epicsInt32) value);
+    } catch (const std::runtime_error &e)
+    {
+        // Update to bad channel status message and rethrow exception
+        updateChannelStatusString(channel, "Failed to set parameter: " + paramName, epicsSevMajor);
+        throw e;
+    }
+    // Set channel status message
+    updateChannelStatusString(channel, "Parameter updated:" + paramName, epicsSevNone);
+
+    return status;
+}
+
+
 // Change the Interface value of a channel via the asynPortClient
 asynStatus ELM3704::setChannelInterface(const unsigned int &channel, const unsigned int &value)
 {
-    // Add one to channel as the asyn parameter is numbered 1-4
-    std::string parameterString = "CH" + std::to_string(channel+1) + ":Interface";
-    asynStatus status = sdoPortClient.writeRead(parameterString, (epicsInt32) value);
+    // Set the parameter
+    asynStatus status = setChannelParameter(channel, "Interface", value);
 
     // When we change interface we also need to check if sub-settings change based on
     // allowed values
     readCurrentChannelSubSettings(channel);
-
-    // Set channel status string
-    updateChannelStatusString(channel, "Updated interface setting", epicsSevNone);
 
     return status;
 }
@@ -629,65 +646,32 @@ asynStatus ELM3704::setChannelInterface(const unsigned int &channel, const unsig
 // Change the sensor supply value of a channel via the asynPortClient
 asynStatus ELM3704::setChannelSensorSupply(const unsigned int &channel, const unsigned int &value)
 {
-    // Add one to channel as the asyn parameter is numbered 1-4
-    std::string parameterString = "CH" + std::to_string(channel+1) + ":SensorSupply";
-    asynStatus status = sdoPortClient.writeRead(parameterString, (epicsInt32) value);
-
-    // Set channel status string
-    updateChannelStatusString(channel, "Updated sensor supply", epicsSevNone);
-
-    return status;
+    // Set parameter
+    return setChannelParameter(channel, "SensorSupply", value);
 }
 
 
 // Change the RTD element value of a channel via the asynPortClient
 asynStatus ELM3704::setChannelRTDElement(const unsigned int &channel, const unsigned int &value)
 {
-    // Add one to channel as the asyn parameter is numbered 1-4
-    std::string parameterString = "CH" + std::to_string(channel+1) + ":RTDElement";
-    asynStatus status = sdoPortClient.writeRead(parameterString, (epicsInt32) value);
-
-    // Set channel status string
-    updateChannelStatusString(channel, "Updated RTD element", epicsSevNone);
-
-    return status;
+    // Set parameter
+    return setChannelParameter(channel, "RTDElement", value);
 }
 
 
 // Change the RTD element value of a channel via the asynPortClient
 asynStatus ELM3704::setChannelTCElement(const unsigned int &channel, const unsigned int &value)
 {
-    // Add one to channel as the asyn parameter is numbered 1-4
-    std::string parameterString = "CH" + std::to_string(channel+1) + ":TCElement";
-    asynStatus status = sdoPortClient.writeRead(parameterString, (epicsInt32) value);
-
-    // Set channel status string
-    updateChannelStatusString(channel, "Updated TC element", epicsSevNone);
-
-    return status;
+    // Set parameter
+    return setChannelParameter(channel, "TCElement", value);
 }
 
 
 // Change the Scaler value of a channel via the asynPortClient
 asynStatus ELM3704::setChannelScaler(const unsigned int &channel, const unsigned int &value)
 {
-    asynStatus status;
-
-    // Add one to channel as the asyn parameter is numbered 1-4
-    std::string parameterString = "CH" + std::to_string(channel+1) + ":Scaler";
-    try
-    {
-        status = sdoPortClient.writeRead(parameterString, (epicsInt32) value);
-    } catch (const std::runtime_error &e)
-    {
-        // Update to bad channel status message and rethrow exception
-        updateChannelStatusString(channel, "Failed to set scaler parameter", epicsSevMajor);
-        throw e;
-    }
-    // Set channel status message
-    updateChannelStatusString(channel, "Updated scaler setting", epicsSevNone);
-
-    return status;
+    // Set parameter
+    return setChannelParameter(channel, "Scaler", value);
 }
 
 
@@ -695,13 +679,7 @@ asynStatus ELM3704::setChannelScaler(const unsigned int &channel, const unsigned
 asynStatus ELM3704::readChannelSubSetting(const unsigned int &channel, const std::string &paramName, epicsInt32 &paramValue)
 {
     std::string paramString = "CH" + std::to_string(channel+1) + ":" + paramName;
-    asynStatus status = sdoPortClient.read(paramString, paramValue);
-    if (status)
-    {
-        // TODO: may be needed if we cannot read back the asyn parameter values
-        // status = sdoPortClient.write(paramString, 0);
-    }
-    return status;
+    return sdoPortClient.read(paramString, paramValue);
 }
 
 
@@ -770,7 +748,6 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                 switch (value)
                 {
                     case Type::None:
-                        printf("Channel %d measurement type changed to None\n", ch);
                         writeNASubTypeOption(ch);
                         writeNASensorSupplyOption(ch);
                         writeNARTDElementPageOption(ch);
@@ -781,7 +758,6 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                         break;
 
                     case Type::Voltage:
-                        printf("Channel %d measurement type changed to Voltage\n", ch);
                         writeVoltageSubTypeOptions(ch);
                         writeNASensorSupplyOption(ch);
                         writeNARTDElementPageOption(ch);
@@ -792,7 +768,6 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                         break;
 
                     case Type::Current:
-                        printf("Channel %d measurement type changed to Current\n", ch);
                         writeCurrentSubTypeOptions(ch);
                         writeNASensorSupplyOption(ch);
                         writeNARTDElementPageOption(ch);
@@ -803,7 +778,6 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                         break;
 
                     case Type::Potentiometer:
-                        printf("Channel %d measurement type changed to Potentiometer\n", ch);
                         writePotentiometerSubTypeOptions(ch);
                         writeNASensorSupplyOption(ch);
                         writeNARTDElementPageOption(ch);
@@ -814,7 +788,6 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                         break;
 
                     case Type::Thermocouple:
-                        printf("Channel %d measurement type changed to Thermocouple\n", ch);
                         writeThermocoupleSubTypeOptions(ch);
                         writeNASensorSupplyOption(ch);
                         writeNARTDElementPageOption(ch);
@@ -825,7 +798,6 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                         break;
 
                     case Type::IEPiezoElectric:
-                        printf("Channel %d measurement type changed to IEPE\n", ch);
                         writeIEPESubTypeOptions(ch);
                         writeNASensorSupplyOption(ch);
                         writeNARTDElementPageOption(ch);
@@ -836,7 +808,6 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                         break;
 
                     case Type::StrainGaugeFullBridge:
-                        printf("Channel %d measurement type changed to Strain gauge FB\n", ch);
                         writeStrainGaugeFBSubTypeOptions(ch);
                         writeStrainGaugeSensorSupplyOptions(ch);
                         writeNARTDElementPageOption(ch);
@@ -847,7 +818,6 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                         break;
 
                     case Type::StrainGaugeHalfBridge:
-                        printf("Channel %d measurement type changed to Strain gauge HB\n", ch);
                         writeStrainGaugeHBSubTypeOptions(ch);
                         writeStrainGaugeSensorSupplyOptions(ch);
                         writeNARTDElementPageOption(ch);
@@ -858,7 +828,6 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                         break;
 
                     case Type::StrainGaugeQuarterBridge2Wire:
-                        printf("Channel %d measurement type changed to Strain gauge QB 2 wire\n", ch);
                         writeStrainGaugeQB2WireSubTypeOptions(ch);
                         writeStrainGaugeSensorSupplyOptions(ch);
                         writeNARTDElementPageOption(ch);
@@ -869,7 +838,6 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                         break;
 
                     case Type::StrainGaugeQuarterBridge3Wire:
-                        printf("Channel %d measurement type changed to Strain gauge QB 3 wire\n", ch);
                         writeStrainGaugeQB3WireSubTypeOptions(ch);
                         writeStrainGaugeSensorSupplyOptions(ch);
                         writeNARTDElementPageOption(ch);
@@ -880,7 +848,6 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                         break;
 
                     case Type::RTD:
-                        printf("Channel %d measurement type changed to RTD\n", ch);
                         writeRTDSubTypeOptions(ch);
                         writeNASensorSupplyOption(ch);
                         writeRTDElementPageOptions(ch);
@@ -891,7 +858,6 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                         break;
 
                     default:
-                        printf("Channel %d measurement type changed to unimplemented type %d\n", ch, value);
                         writeNASubTypeOption(ch);
                         writeNASensorSupplyOption(ch);
                         writeNARTDElementPageOption(ch);
