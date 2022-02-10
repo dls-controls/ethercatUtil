@@ -13,6 +13,7 @@ SdoPortClient::SdoPortClient(const char* sdoPortName):
 // Write to the port and wait until the readback changes
 asynStatus SdoPortClient::writeRead(const std::string &paramName, const epicsInt32 &value, const double &timeout)
 {
+    // Write to the value parameter
     asynStatus status = portClient.write(paramName, value);
     if (status)
     {
@@ -44,12 +45,18 @@ asynStatus SdoPortClient::writeRead(const std::string &paramName, const epicsInt
                 if (parameterSetTime > timeout)
                 {
                     // Throw an exception which should be caught by writeInt32
-                    throw std::runtime_error("ERROR: timeout waiting for " + paramName + " to update");
+                    throw std::runtime_error(
+                        "ERROR: timeout setting " +
+                        paramName +
+                        " from " +
+                        std::to_string(readbackValue) +
+                        " to " +
+                        std::to_string(value)
+                    );
                 }
                 else if (readStatus)
                 {
                     // TODO: check if we should throw a custom error here and set status message
-                    printf("ERROR: could not read asynPortClient parameter %s\n", paramName.c_str());
                     break;
                 }
             }
@@ -98,6 +105,7 @@ void SdoPortClient::report()
     else
     {
         portClient.report(pFile, 1);
+        fclose(pFile);
         printf("%s: report file written\n", portName.c_str());
     }
 }

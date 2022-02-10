@@ -1,7 +1,7 @@
 from iocbuilder import AutoSubstitution
-from iocbuilder.arginfo import makeArgInfo
+from iocbuilder.arginfo import makeArgInfo, Simple
 from iocbuilder.modules.asyn import Asyn
-from iocbuilder.modules.ethercat.devices import SdoControl, SdoEntryControl
+from iocbuilder.modules.ethercat.devices import SdoControl, SdoEntryControlWithTemplate
 
 from core import AnalogInputModule, base_arginfo_args
 
@@ -25,7 +25,7 @@ class ELM3704(AnalogInputModule):
     DbdFileList = ['ethercatUtil']
     LibFileList = ['ethercatUtil']
 
-    def __init__(self, name, slave, P, R, SCAN="1 second"):
+    def __init__(self, name, slave, P, R, SCAN="1 second", simulation=False):
         # Create name for the asynPortDriver port for handling configuration
         self.logic_port = slave.name + ":LOGIC"
 
@@ -40,9 +40,14 @@ class ELM3704(AnalogInputModule):
         )
 
         # Create SDO interface for configuring module
-        self.create_sdo_interface(slave)
+        if not simulation:
+            self.create_sdo_interface(slave)
 
-    ArgInfo = makeArgInfo(__init__, **base_arginfo_args)
+    ArgInfo = makeArgInfo(
+        __init__,
+        simulation=Simple("If simulated, disable SDO creation requests", bool),
+        **base_arginfo_args
+    )
 
     # Override default templates for the ELM3704 GUI
     def make_module_template(self):
@@ -85,6 +90,9 @@ class ELM3704(AnalogInputModule):
         Ethercat support module. This creates our {slave_port}_SDO asyn port to be able
         to change the settings on the ELM3704 module.
 
+        Templates are also instantiated to initialise the SDO asynPortDriver parameters
+        which allows us to read their values without errors.
+
         NOTE: indices and subindices have been converted from hex in the manual to
         decimal.
         """
@@ -104,41 +112,91 @@ class ELM3704(AnalogInputModule):
 
             # Create the entries for each parameter under main settings via subindex
             # Interface 0x80n0:01
-            entry_name = settings_name + ":Interface"
+            entry_name = "SDO." + self.name + settings_name + ":Interface"
             asyn_parameter_name = "{channel}:Interface".format(channel=channel)
             description = "{channel} interface".format(channel=channel)
             subindex = 1
             bit_length = 16
-            SdoEntryControl(entry_name, sdo_control_settings, asyn_parameter_name, description, subindex, bit_length)
+            pv_suffix = ":" + self.r + ":SDO:" + asyn_parameter_name
+            SdoEntryControlWithTemplate(
+                entry_name,
+                sdo_control_settings,
+                asyn_parameter_name,
+                description,
+                subindex,
+                bit_length,
+                self.p,
+                pv_suffix
+            )
 
             # Sensor supply 0x80n0:02
-            entry_name = settings_name + ":SensorSupply"
+            entry_name = "SDO." + self.name + settings_name + ":SensorSupply"
             asyn_parameter_name = "{channel}:SensorSupply".format(channel=channel)
             description = "{channel} sensor supply voltage".format(channel=channel)
             subindex = 2
             bit_length = 16
-            SdoEntryControl(entry_name, sdo_control_settings, asyn_parameter_name, description, subindex, bit_length)
+            pv_suffix = ":" + self.r + ":SDO:" + asyn_parameter_name
+            SdoEntryControlWithTemplate(
+                entry_name,
+                sdo_control_settings,
+                asyn_parameter_name,
+                description,
+                subindex,
+                bit_length,
+                self.p,
+                pv_suffix
+            )
 
             # RTD element 0x80n0:14
-            entry_name = settings_name + ":RTDElement"
+            entry_name = "SDO." + self.name + settings_name + ":RTDElement"
             asyn_parameter_name = "{channel}:RTDElement".format(channel=channel)
             description = "{channel} RTD element".format(channel=channel)
             subindex = 20
             bit_length = 16
-            SdoEntryControl(entry_name, sdo_control_settings, asyn_parameter_name, description, subindex, bit_length)
+            pv_suffix = ":" + self.r + ":SDO:" + asyn_parameter_name
+            SdoEntryControlWithTemplate(
+                entry_name,
+                sdo_control_settings,
+                asyn_parameter_name,
+                description,
+                subindex,
+                bit_length,
+                self.p,
+                pv_suffix
+            )
 
             # TC element 0x80n0:15
-            entry_name = settings_name + ":TCElement"
+            entry_name = "SDO." + self.name + settings_name + ":TCElement"
             asyn_parameter_name = "{channel}:TCElement".format(channel=channel)
             description = "{channel} TC element".format(channel=channel)
             subindex = 21
             bit_length = 16
-            SdoEntryControl(entry_name, sdo_control_settings, asyn_parameter_name, description, subindex, bit_length)
+            pv_suffix = ":" + self.r + ":SDO:" + asyn_parameter_name
+            SdoEntryControlWithTemplate(
+                entry_name,
+                sdo_control_settings,
+                asyn_parameter_name,
+                description,
+                subindex,
+                bit_length,
+                self.p,
+                pv_suffix
+            )
 
             # Scaler 0x80n0:2E
-            entry_name = settings_name + ":Scaler"
+            entry_name = "SDO." + self.name + settings_name + ":Scaler"
             asyn_parameter_name = "{channel}:Scaler".format(channel=channel)
             description = "{channel} scaling".format(channel=channel)
             subindex = 46
             bit_length = 16
-            SdoEntryControl(entry_name, sdo_control_settings, asyn_parameter_name, description, subindex, bit_length)
+            pv_suffix = ":" + self.r + ":SDO:" + asyn_parameter_name
+            SdoEntryControlWithTemplate(
+                entry_name,
+                sdo_control_settings,
+                asyn_parameter_name,
+                description,
+                subindex,
+                bit_length,
+                self.p,
+                pv_suffix
+            )

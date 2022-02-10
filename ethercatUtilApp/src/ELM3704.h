@@ -6,7 +6,7 @@
  * Class for handling the logic for configuring the ELM3704 multi-purpose
  * channels.
  *
- */
+*/
 
 #ifndef ELM3704_H
 #define ELM3704_H
