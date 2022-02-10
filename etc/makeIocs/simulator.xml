@@ -1,0 +1,6 @@
+<?xml version="1.0" ?>
+<components arch="linux-x86_64">
+	<ethercatUtil.SimELM3704SdoPortDriver name="ERIO.4"/>
+	<!--Multi-purpose analog input-->
+	<ethercatUtil.ELM3704 P="EL3704:TEST" R="M3" name="GUI.M3" simulation="True" slave="ERIO.4"/>
+</components>
