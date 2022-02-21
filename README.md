@@ -46,15 +46,18 @@ fixed-purpose module:
         + Set the measurement subtype to describe range of values or other 
         additional information.
 
+If the module is general purpose (like the ELM3704) - then you may want
+to write an asynPortDriver which can present a friendly interface to the
+user and translate that to the relevant SDO values to set over the SDO
+asyn port.
+
 ### To do
 
 * Test module with actual signals
 * Add support for configuring ELM3704 multi-purpose modules
-    * Debug error from asynPortClient - create simulated asynPortDriver to talk to
-    * Refactor setChannelXXX functions into single method which accepts a parameter string and status message
-    * Create SdoPortClient class for handling communication with SDO port
-* Finalise EDM screen designs
+    * Add reset option
 * Create CSS screens
+    * Fix issue with dynamically changing MBBI/O labels
 * Add optional logic for copying scale and offset values to an AreaDetector scale plugin
 * Add documentation
 * Add change log
