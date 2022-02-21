@@ -1,7 +1,7 @@
 #==============================================================================
-# Ethercat GUI input channel template
+# Ethercat GUI ELM3704 channel template
 #
-# Contains channel-level PVs for an input module.
+# Contains channel-level PVs for an ELM3704 analog input module.
 #
 # Macros
 # % macro, P,         PV prefix
@@ -14,10 +14,14 @@
 #
 #==============================================================================
 
+# Template for CSS channel detail pane
+include "ethercat_gui_ELM3704_channel_detail.template"
+
 record(longin, "$(P):$(R):CH$(CHANNEL):CHANNEL")
 {
     field(DESC, "Channel number")
     field(VAL,  "$(CHANNEL)")
+    field(PINI, "YES")
 }
 
 record(bi, "$(P):$(R):CH$(CHANNEL):LOADED")

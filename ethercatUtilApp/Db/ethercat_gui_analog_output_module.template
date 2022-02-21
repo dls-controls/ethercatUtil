@@ -14,6 +14,7 @@
 #
 # GUI
 # % gui, $(name=), edmembed, ethercat_analog_output_4_channel.edl, P=$(P), R=$(R)
+# % gui, $(name=), boyembed, ethercatUtilApp_opi/ethercat_analog_output_4_channel.opi, P=$(P), R=$(R)
 #
 #==============================================================================
 
@@ -21,12 +22,14 @@ record(longin, "$(P):$(R):POSITION")
 {
     field(DESC, "Module position")
     field(VAL,  "$(POSITION)")
+    field(PINI, "YES")
 }
 
 record(stringin, "$(P):$(R):MODULE_TYPE")
 {
     field(DESC, "Module type")
     field(VAL,  "$(TYPE)")
+    field(PINI, "YES")
 }
 
 record(mbbi, "$(P):$(R):STATE")

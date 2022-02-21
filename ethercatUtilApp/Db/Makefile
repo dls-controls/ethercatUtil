@@ -23,6 +23,9 @@ DB += ethercat_gui_ELM3704_module.template
 # Custom channel templates
 DB += ethercat_gui_ELM3704_channel.template
 
+# GUI templates
+DB += ethercat_gui_ELM3704_channel_detail.template
+
 #----------------------------------------
 
 include $(TOP)/configure/RULES

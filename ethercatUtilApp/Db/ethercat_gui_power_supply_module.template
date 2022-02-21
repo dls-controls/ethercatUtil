@@ -17,6 +17,7 @@
 #
 # GUI
 # % gui, $(name=), edmembed, ethercat_power_supply.edl, P=$(P), R=$(R)
+# % gui, $(name=), boyembed, ethercatUtilApp_opi/ethercat_power_supply.opi, P=$(P), R=$(R)
 #
 #==============================================================================
 
@@ -24,12 +25,14 @@ record(longin, "$(P):$(R):POSITION")
 {
     field(DESC, "Module position")
     field(VAL,  "$(POSITION)")
+    field(PINI, "YES")
 }
 
 record(stringin, "$(P):$(R):MODULE_TYPE")
 {
     field(DESC, "Module type")
     field(VAL,  "$(TYPE)")
+    field(PINI, "YES")
 }
 
 record(mbbi, "$(P):$(R):STATE")
@@ -58,12 +61,14 @@ record(stringin, "$(P):$(R):TYPE")
 {
     field(DESC, "Measurement type")
     field(VAL,  "Power supply")
+    field(PINI, "YES")
 }
 
 record(stringin, "$(P):$(R):SUBTYPE")
 {
     field(DESC, "Measurement subtype")
     field(VAL,  "$(SUBTYPE)")
+    field(PINI, "YES")
 }
 
 record(bi, "$(P):$(R):POWER_OK")

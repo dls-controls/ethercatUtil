@@ -1,5 +1,5 @@
 #==============================================================================
-# Ethercat GUI analog output channel template
+# Ethercat GUI digital output channel template
 #
 # Contains channel-level PVs for a digital output module.
 #
@@ -18,6 +18,7 @@ record(longin, "$(P):$(R):CH$(CHANNEL):CHANNEL")
 {
     field(DESC, "Channel number")
     field(VAL,  "$(CHANNEL)")
+    field(PINI, "YES")
 }
 
 record(stringout, "$(P):$(R):CH$(CHANNEL):ALIAS")
@@ -31,12 +32,14 @@ record(stringin, "$(P):$(R):CH$(CHANNEL):TYPE")
 {
     field(DESC, "Measurement type")
     field(VAL,  "$(TYPE)")
+    field(PINI, "YES")
 }
 
 record(stringin, "$(P):$(R):CH$(CHANNEL):SUBTYPE")
 {
     field(DESC, "Measurement subtype")
     field(VAL,  "$(SUBTYPE)")
+    field(PINI, "YES")
 }
 
 record(bo, "$(P):$(R):CH$(CHANNEL):OUTPUT")

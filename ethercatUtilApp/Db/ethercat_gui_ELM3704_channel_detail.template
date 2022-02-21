@@ -1,0 +1,50 @@
+#==============================================================================
+# Ethercat GUI ELM3704 channel CSS detail template
+#
+# Contains PVs to display on the detail pane in CSS for a single ELM3704
+# channel.
+#
+# Macros
+# % macro, name,      Object name
+# % macro, P,         PV prefix
+# % macro, R,         PV suffix
+# % macro, CHANNEL,   Channel number
+#
+#==============================================================================
+
+# CSS file
+# % gui, $(name), boydetail, ethercatUtilApp_opi/ethercat_single_ELM3704_channel_detail.opi, P=$(P), R=$(R), CHANNEL=$(CHANNEL)
+
+## Info
+
+# % gui, $(name), groupHeading, Info
+# % gui, $(name), readback,     Position,            $(P):$(R):POSITION
+# % gui, $(name), readback,     Module type,         $(P):$(R):MODULE_TYPE
+# % gui, $(name), readback,     Channel number,      $(P):$(R):CH$(CHANNEL):CHANNEL
+# % gui, $(name), groupExit,    InfoExit
+
+## Measurement settings
+
+# % gui, $(name), groupHeading, Measurement
+# % gui, $(name), enum,         Type,            $(P):$(R):CH$(CHANNEL):TYPE
+# % gui, $(name), readback,     Type,            $(P):$(R):CH$(CHANNEL):TYPE_RBV
+# % gui, $(name), enum,         Subtype,         $(P):$(R):CH$(CHANNEL):SUBTYPE
+# % gui, $(name), readback,     Subtype,         $(P):$(R):CH$(CHANNEL):SUBTYPE_RBV
+# % gui, $(name), groupExit,    MeasurementExit
+
+## Miscellaneous settings
+
+# % gui, $(name), groupHeading, Miscellaneous
+# % gui, $(name), enum,         Scaler,           $(P):$(R):CH$(CHANNEL):SCALER
+# % gui, $(name), readback,     Scaler,           $(P):$(R):CH$(CHANNEL):SCALER_RBV
+# % gui, $(name), enum,         SG sensor supply, $(P):$(R):CH$(CHANNEL):SENSOR_SUPPLY
+# % gui, $(name), readback,     SG sensor supply, $(P):$(R):CH$(CHANNEL):SENSOR_SUPPLY_RBV
+# % gui, $(name), enum,         RTD page,         $(P):$(R):CH$(CHANNEL):RTD_PAGE
+# % gui, $(name), readback,     RTD page,         $(P):$(R):CH$(CHANNEL):RTD_PAGE_RBV
+# % gui, $(name), enum,         RTD element,      $(P):$(R):CH$(CHANNEL):RTD_ELEMENT
+# % gui, $(name), readback,     RTD element,      $(P):$(R):CH$(CHANNEL):RTD_ELEMENT_RBV
+# % gui, $(name), enum,         TC page,          $(P):$(R):CH$(CHANNEL):TC_PAGE
+# % gui, $(name), readback,     TC page,          $(P):$(R):CH$(CHANNEL):TC_PAGE_RBV
+# % gui, $(name), enum,         TC element,       $(P):$(R):CH$(CHANNEL):TC_ELEMENT
+# % gui, $(name), readback,     TC element,       $(P):$(R):CH$(CHANNEL):TC_ELEMENT_RBV
+# % gui, $(name), groupExit,    MiscellaneousExit
