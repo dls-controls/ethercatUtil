@@ -740,7 +740,7 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
             {
                 /* Update other options based on the current selected type
                  *   - Measurement subtype
-                 *   - Sensor type options
+                 *   - Sensor supply options
                  *   - RTD element options
                  *   - TC element
                  *   - Scaler options
