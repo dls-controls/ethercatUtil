@@ -55,6 +55,7 @@ record(stringout, "$(P):$(R):ALIAS")
     field(DESC, "Channel alias")
     field(VAL,  "")
     field(PINI, "YES")
+    info(autosaveFields, "VAL")
 }
 
 record(stringin, "$(P):$(R):TYPE")

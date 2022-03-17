@@ -121,6 +121,7 @@ record(longin, "$(P):$(R):CH$(CHANNEL):RAW")
     field(INP,  "@asyn($(PORT))$(ENTRY)")
     field(FLNK, "$(P):$(R):CH$(CHANNEL):VAL")
     field(SCAN, "$(SCAN)")
+    info(archiver, "1 Monitor")
 }
 
 record(stringout, "$(P):$(R):CH$(CHANNEL):ALIAS")
@@ -128,6 +129,7 @@ record(stringout, "$(P):$(R):CH$(CHANNEL):ALIAS")
     field(DESC, "Channel alias")
     field(VAL,  "")
     field(PINI, "YES")
+    info(autosaveFields, "VAL")
 }
 
 record(ao, "$(P):$(R):CH$(CHANNEL):SCALE")
@@ -136,6 +138,8 @@ record(ao, "$(P):$(R):CH$(CHANNEL):SCALE")
     field(VAL,  1)
     field(PINI, "YES")
     field(FLNK, "$(P):$(R):CH$(CHANNEL):VAL")
+    info(autosaveFields, "VAL")
+    info(archiver, "1 Monitor")
 }
 
 record(ao, "$(P):$(R):CH$(CHANNEL):OFFSET")
@@ -144,6 +148,8 @@ record(ao, "$(P):$(R):CH$(CHANNEL):OFFSET")
     field(VAL,  0)
     field(PINI, "YES")
     field(FLNK, "$(P):$(R):CH$(CHANNEL):VAL")
+    info(autosaveFields, "VAL")
+    info(archiver, "1 Monitor")
 }
 
 record(calc, "$(P):$(R):CH$(CHANNEL):VAL")
@@ -153,6 +159,7 @@ record(calc, "$(P):$(R):CH$(CHANNEL):VAL")
     field(INPB, "$(P):$(R):CH$(CHANNEL):SCALE")
     field(INPC, "$(P):$(R):CH$(CHANNEL):OFFSET")
     field(CALC, "A*B+C")
+    info(archiver, "1 Monitor")
 }
 
 record(mbbo, "$(P):$(R):CH$(CHANNEL):SENSOR_SUPPLY")
@@ -163,6 +170,7 @@ record(mbbo, "$(P):$(R):CH$(CHANNEL):SENSOR_SUPPLY")
     field(VAL,  "0")
     field(ZRST, "N/A")
     info(asyn:READBACK, "1")
+    info(autosaveFields, "VAL")
 }
 
 record(mbbi, "$(P):$(R):CH$(CHANNEL):SENSOR_SUPPLY_RBV")
@@ -182,6 +190,7 @@ record(mbbo, "$(P):$(R):CH$(CHANNEL):RTD_PAGE")
     field(VAL,  "0")
     field(ZRST, "N/A")
     info(asyn:READBACK, "1")
+    info(autosaveFields, "VAL")
 }
 
 record(mbbi, "$(P):$(R):CH$(CHANNEL):RTD_PAGE_RBV")
@@ -201,6 +210,7 @@ record(mbbo, "$(P):$(R):CH$(CHANNEL):RTD_ELEMENT")
     field(VAL,  "0")
     field(ZRST, "N/A")
     info(asyn:READBACK, "1")
+    info(autosaveFields, "VAL")
 }
 
 record(mbbi, "$(P):$(R):CH$(CHANNEL):RTD_ELEMENT_RBV")
@@ -220,6 +230,7 @@ record(mbbo, "$(P):$(R):CH$(CHANNEL):TC_PAGE")
     field(VAL,  "0")
     field(ZRST, "N/A")
     info(asyn:READBACK, "1")
+    info(autosaveFields, "VAL")
 }
 
 record(mbbi, "$(P):$(R):CH$(CHANNEL):TC_PAGE_RBV")
@@ -239,6 +250,7 @@ record(mbbo, "$(P):$(R):CH$(CHANNEL):TC_ELEMENT")
     field(VAL,  "0")
     field(ZRST, "N/A")
     info(asyn:READBACK, "1")
+    info(autosaveFields, "VAL")
 }
 
 record(mbbi, "$(P):$(R):CH$(CHANNEL):TC_ELEMENT_RBV")
@@ -258,6 +270,7 @@ record(mbbo, "$(P):$(R):CH$(CHANNEL):SCALER")
     field(VAL,  "0")
     field(ZRST, "N/A")
     info(asyn:READBACK, "1")
+    info(autosaveFields, "VAL")
 }
 
 record(mbbi, "$(P):$(R):CH$(CHANNEL):SCALER_RBV")

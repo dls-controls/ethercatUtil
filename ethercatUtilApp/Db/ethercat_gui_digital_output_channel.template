@@ -26,6 +26,7 @@ record(stringout, "$(P):$(R):CH$(CHANNEL):ALIAS")
     field(DESC, "Channel alias")
     field(VAL,  "")
     field(PINI, "YES")
+    info(autosaveFields, "VAL")
 }
 
 record(stringin, "$(P):$(R):CH$(CHANNEL):TYPE")
@@ -58,4 +59,5 @@ record(bi, "$(P):$(R):CH$(CHANNEL):OUTPUT:RBV")
     field(ZNAM, "OFF")
     field(ONAM, "ON")
     field(SCAN, "1 second")
+    info(archiver, "1 Monitor")
 }

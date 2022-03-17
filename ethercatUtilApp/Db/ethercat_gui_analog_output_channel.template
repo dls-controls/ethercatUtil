@@ -31,6 +31,7 @@ record(stringout, "$(P):$(R):CH$(CHANNEL):ALIAS")
     field(DESC, "Channel alias")
     field(VAL,  "")
     field(PINI, "YES")
+    info(autosaveFields, "VAL")
 }
 
 record(stringin, "$(P):$(R):CH$(CHANNEL):TYPE")
@@ -62,6 +63,7 @@ record(ao, "$(P):$(R):CH$(CHANNEL):OUTPUT")
     field(PINI, "NO")
     field(PREC, "3")
     field(VAL,  "0")
+    info(autosaveFields, "VAL")
 }
 
 record(ai, "$(P):$(R):CH$(CHANNEL):OUTPUT:RBV")
@@ -75,4 +77,5 @@ record(ai, "$(P):$(R):CH$(CHANNEL):OUTPUT:RBV")
     field(EGU,  "$(EGU)")
     field(PREC, "3")
     field(SCAN, "1 second")
+    info(archiver, "1 Monitor")
 }
