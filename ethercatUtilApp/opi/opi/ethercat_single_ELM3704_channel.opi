@@ -487,7 +487,14 @@ $(pv_value)</tooltip>
     <name>Subtype</name>
     <pv_name>$(P):$(R):CH$(CHANNEL):SUBTYPE</pv_name>
     <pv_value />
-    <rules />
+    <rules>
+      <rule name="Visibility" prop_id="visible" out_exp="false">
+        <exp bool_exp="pv0==1">
+          <value>false</value>
+        </exp>
+        <pv trig="true">$(P):$(R):CH$(CHANNEL):LOADED</pv>
+      </rule>
+    </rules>
     <scale_options>
       <width_scalable>true</width_scalable>
       <height_scalable>true</height_scalable>
