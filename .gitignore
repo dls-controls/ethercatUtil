@@ -10,3 +10,4 @@ documentation
 *~
 *.pyc
 .vscode
+.project
