@@ -1,0 +1,25 @@
+#==============================================================================
+# Ethercat Input Channel Scale and Offset sync template
+#
+# Instanstiates a sequencer record which synchronises the scale and offset
+# values of an input module channel with other records, such as the Scale
+# AreaDetector plugin used by ADEtherCAT.
+#
+# Macros
+# % macro, P,                PV prefix
+# % macro, R,                PV suffix
+# % macro, CHANNEL,          Channel number
+# % macro, OUTPUT_SCALE_PV,  PV to copy scale value to
+# % macro, OUTPUT_OFFSET_PV, PV to copy offset value to
+#
+#==============================================================================
+
+record(seq, "$(P):$(R):CH$(CHANNEL):SCALE:SYNC")
+{
+    field(DESC, "Copy scale and offset values")
+    field(SCAN, "Passive")
+    field(DOL1, "$(P):$(R):CH$(CHANNEL):SCALE CP")
+    field(DOL2, "$(P):$(R):CH$(CHANNEL):OFFSET CP")
+    field(LNK1, "$(OUTPUT_SCALE_PV)")
+    field(LNK2, "$(OUTPUT_OFFSET_PV)")
+}

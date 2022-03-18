@@ -8,4 +8,5 @@ __all__ = ExportModules(
     'digital_output_modules',
     'psu_modules',
     'simulator',
+    'util',
 )

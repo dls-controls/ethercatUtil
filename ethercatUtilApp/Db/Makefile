@@ -26,6 +26,9 @@ DB += ethercat_gui_ELM3704_channel.template
 # GUI templates
 DB += ethercat_gui_ELM3704_channel_detail.template
 
+# Utility templates
+DB += input_channel_scale_offset_sync.template
+
 #----------------------------------------
 
 include $(TOP)/configure/RULES
