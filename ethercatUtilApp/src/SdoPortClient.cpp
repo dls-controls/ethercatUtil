@@ -106,6 +106,6 @@ void SdoPortClient::report()
     {
         portClient.report(pFile, 1);
         fclose(pFile);
-        printf("%s: report file written\n", portName.c_str());
+        printf("%s: report file written to %s\n", portName.c_str(), fileName);
     }
 }
