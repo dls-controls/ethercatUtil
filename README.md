@@ -54,9 +54,7 @@ asyn port.
 
 * Test module with actual signals
 * Add support for configuring ELM3704 multi-purpose modules
-    * Add reset option
-    * Bug fixes
-        * In TC - 80mV subtype does not support TC element (disable)
+    * Add reset module option
 * Add documentation
 * Replace pass by const reference of primitive types (e.g. int) to pass by value
 * Change all references of channel (ch and channel) to be consistent
