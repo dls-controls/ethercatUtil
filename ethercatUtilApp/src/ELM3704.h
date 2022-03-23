@@ -76,6 +76,7 @@ private:
     // Methods for updating secondary settings
     void writeNASensorSupplyOption(const unsigned int &channel);
     void writeStrainGaugeSensorSupplyOptions(const unsigned int &channel);
+    void writeIEPESensorySupplyOption(const unsigned int &channel);
     void writeNARTDElementPageOption(const unsigned int &channel);
     void writeRTDElementPageOptions(const unsigned int &channel);
     void writeNARTDElementOption(const unsigned int &channel);
@@ -87,8 +88,7 @@ private:
     void writeDefaultScalerOptions(const unsigned int &channel);
     void writeThermocoupleScalerOptions(const unsigned int &channel);
 
-    /* THESE FUNCTIONS SHOULD BE REFACTORED INTO SEPARATE CLASS */
-    // Generic methods for writing to the SDO port via asynPortClient
+    // Generic method for writing to the SDO port via asynPortClient
     asynStatus writeInt32SdoPortClient(const std::string &paramName, const epicsInt32 &value);
 
     // Methods for writing to the SDO port via the generic method above
@@ -103,8 +103,6 @@ private:
     asynStatus readChannelSubSetting(const unsigned int &channel, const std::string &paramName, epicsInt32 &paramValue);
     asynStatus readCurrentChannelSubSettings(const unsigned int &channel);
 
-    /* END OF FUNCTIONS */
-
     // Method to call after changing measurement type
     void setFirstSubTypeAfterTypeChanged(const unsigned int &channel, const int &value, const std::string &statusString);
 
@@ -117,6 +115,9 @@ private:
     bool checkIfTCPageChanged(const int &param, const epicsInt32 &value);
     bool checkIfTCOptionChanged(const int &param, const epicsInt32 &value);
     bool checkIfScalerOptionChanged(const int &param, const epicsInt32 &value);
+
+    // Methods for special handling of asynParameter changes
+    void checkIfSubTypeOptionChangingBetweenTCTypes(unsigned int channel, const epicsInt32 &value);
 
     // Method for updating channel status string
     void updateChannelStatusString(const unsigned int &channel, const std::string &string, const epicsAlarmSeverity &severity);

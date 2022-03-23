@@ -360,6 +360,21 @@ void ELM3704::writeStrainGaugeSensorSupplyOptions(const unsigned int &channel)
 }
 
 
+// Write the sensor supply options for IEPE measurements
+void ELM3704::writeIEPESensorySupplyOption(const unsigned int &channel)
+{
+    // IEPE measurement type just fixes sensory supply to local control
+    static const char *strings[1] = {
+        "Local control",
+    };
+    // Map values based to the corresponding 0x80n01:02 sensor supply value
+    static int values[1] = { 65534 };
+    static int severities[1] = { 0 };
+    // Update strings and values
+    doCallbacksEnum((char **)strings, values, severities, 1, measurementSensorSupply[channel], 0);
+}
+
+
 // Empty the RTD page options list
 void ELM3704::writeNARTDElementPageOption(const unsigned int &channel)
 {
@@ -516,7 +531,6 @@ void ELM3704::writeNATCElementOption(const unsigned int &channel)
 void ELM3704::writeTCElementOptions(const unsigned int &channel, const unsigned int &page)
 {
     static const char *firstPageStrings[16] = {
-        "None",
         "K (-270..1372C)",
         "J (-210..1200C)",
         "L (-50..900C)",
@@ -532,17 +546,18 @@ void ELM3704::writeTCElementOptions(const unsigned int &channel, const unsigned 
         "G (1000..2300C)",
         "P (PLII 0..1395C)",
         "Au/Pt (0..1000C)",
-    };
-    static const char *secondPageStrings[4] = {
         "Pt/Pd (0..1000C)",
+    };
+    // Note: the following settings only available from revision 0017 onwards
+    static const char *secondPageStrings[3] = {
         "A-1 (0..2500C)",
         "A-2 (0..1800C)",
         "A-3 (0..1800C)",
     };
 
     // Map values based to the corresponding 0x80n01:14 scaler value
-    static int firstPageValues[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16 };
-    static int secondPageValues[4] = { 17, 18, 19, 20 };
+    static int firstPageValues[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17 };
+    static int secondPageValues[3] = { 18, 19, 20 };
     static int severities[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     // Update strings and values
     epicsInt32 value = 0;
@@ -559,7 +574,7 @@ void ELM3704::writeTCElementOptions(const unsigned int &channel, const unsigned 
             printf("Writing 2nd page TC element options for channel %d\n", channel);
             value = secondPageValues[0];
             elementString += secondPageStrings[0];
-            doCallbacksEnum((char **)secondPageStrings, secondPageValues, severities, 4, measurementTCElement[channel], 0);
+            doCallbacksEnum((char **)secondPageStrings, secondPageValues, severities, 3, measurementTCElement[channel], 0);
             break;
         default:
             printf("ERROR: invalid TC element page %d for channel %d\n", page, channel);
@@ -567,8 +582,8 @@ void ELM3704::writeTCElementOptions(const unsigned int &channel, const unsigned 
     }
     // Update the asyn parameter to the first value on the page
     setIntegerParam(measurementTCElement[channel], value);
-    // Write the interface value to the SDO port
-    setChannelRTDElement(channel, value);
+    // We do not need to set the value here as the module will automatically choose a default
+    // appropriate type.
     // Update the channel status string
     updateChannelStatusString(channel, elementString , epicsSevNone);
 }
@@ -792,14 +807,15 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                         writeNASensorSupplyOption(ch);
                         writeNARTDElementPageOption(ch);
                         writeNARTDElementOption(ch);
-                        writeTCElementPageOptions(ch);
-                        writeTCElementOptions(ch);
+                        // The initial 80mV subtype doesn't use elements
+                        writeNATCElementPageOption(ch);
+                        writeNATCElementOption(ch);
                         writeThermocoupleScalerOptions(ch);
                         break;
 
                     case Type::IEPiezoElectric:
                         writeIEPESubTypeOptions(ch);
-                        writeNASensorSupplyOption(ch);
+                        writeIEPESensorySupplyOption(ch);
                         writeNARTDElementPageOption(ch);
                         writeNARTDElementOption(ch);
                         writeNATCElementPageOption(ch);
@@ -893,6 +909,10 @@ bool ELM3704::checkIfMeasurementSubTypeChanged(const int &param, const epicsInt3
     {
         if (param == measurementSubType[ch])
         {
+            // Check if we are in TC mode and moving from 80mV <-> CJC, CJC RTD
+            checkIfSubTypeOptionChangingBetweenTCTypes(ch, value);
+
+            // Now set interface
             printf("Channel %d measurement subtype changed to %d\n", ch, value);
             setChannelInterface(ch, value);
             return true;
@@ -975,7 +995,7 @@ bool ELM3704::checkIfTCPageChanged(const int &param, const epicsInt32 &value)
 }
 
 
-// Check and handle changes to the RTD option
+// Check and handle changes to the TC option
 bool ELM3704::checkIfTCOptionChanged(const int &param, const epicsInt32 &value)
 {
     for (unsigned int ch=0; ch<4; ch++)
@@ -1006,6 +1026,52 @@ bool ELM3704::checkIfScalerOptionChanged(const int &param, const epicsInt32 &val
 }
 
 
+// Check if we are going between TC subtype options
+void ELM3704::checkIfSubTypeOptionChangingBetweenTCTypes(unsigned int channel, const epicsInt32 &value)
+{
+    /* There are 3 TC measurement types:
+       * 81 - TC 80mV
+       * 86 - TC CJC
+       * 87 - TC CJC RTD (Note: only available from revision 0017 onwards)
+
+       CJC and CJC RTD modes expect the TC element to be set to the appropriate type. 80mV
+       just measures the voltage output. So we need to check if the measurement sub-type is
+       swapping between these two modes to display correct TC element options.
+    */
+    enum TCType { voltage=81, cjc=86, cjcrtd=87 };
+
+    // Check if we are going to 80mV
+    if (value == TCType::voltage)
+    {
+        // Check if we are moving from CJC or CJC RTD
+        int currentSubType;
+        getIntegerParam(measurementSubType[channel], &currentSubType);
+        if (currentSubType == TCType::cjc || currentSubType == TCType::cjcrtd)
+        {
+            // Hide TC element options
+            printf("Channel %d going from CJC to 80mV\n", channel);
+            writeNATCElementPageOption(channel);
+            writeNATCElementOption(channel);
+        }
+    }
+    // Check if we are going to CJC or CJC RTD
+    else if (value == TCType::cjc || value == TCType::cjcrtd)
+    {
+        // Check if we are moving from 80mV
+        int currentSubType;
+        getIntegerParam(measurementSubType[channel], &currentSubType);
+        if (currentSubType == TCType::voltage)
+        {
+            // Show TC element options
+            printf("Channel %d going from 80mV to CJC\n", channel);
+            writeTCElementPageOptions(channel);
+            writeTCElementOptions(channel);
+        }
+    }
+
+}
+
+
 // AsynPortDriver::writeInt32 override
 asynStatus ELM3704::writeInt32(asynUser *pasynUser, epicsInt32 value)
 {
@@ -1019,9 +1085,6 @@ asynStatus ELM3704::writeInt32(asynUser *pasynUser, epicsInt32 value)
     const int param = pasynUser->reason;
 
     // Check if we need to take any action via the SDO asynPortClient
-    // TODO: return status values here via parameter reference and decide whether to update parameter
-    // TODO: break out these checks into sub method if grow too large
-    // TOOD: if type or subtype changed, add method to update current setting readbacks
     try
     {
         if (checkIfMeasurementTypeChanged(param, value)) {}
