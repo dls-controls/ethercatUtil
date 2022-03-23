@@ -55,6 +55,5 @@ asyn port.
 * Test module with actual signals
 * Add support for configuring ELM3704 multi-purpose modules
     * Add reset module option
+    * Replace print with proper logging
 * Add documentation
-* Replace pass by const reference of primitive types (e.g. int) to pass by value
-* Change all references of channel (ch and channel) to be consistent
