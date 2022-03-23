@@ -29,8 +29,7 @@ thermocouples, temperature sensors and standard analogue voltages.
 Adding a new module
 -------------------
 
-The steps are hopefully quite simple, assuming this device is a standard 
-fixed-purpose module:
+The steps are hopefully quite simple for a standard fixed-purpose module:
 
 * Identify type of module from the types above
 * Add a class instance in the appropriate builder Python file
@@ -56,22 +55,8 @@ asyn port.
 * Test module with actual signals
 * Add support for configuring ELM3704 multi-purpose modules
     * Add reset option
-* Create CSS screens
-    * Fix issue with dynamically changing MBBI/O labels
-* Add optional logic for copying scale and offset values to an AreaDetector scale plugin
+    * Bug fixes
+        * In TC - 80mV subtype does not support TC element (disable)
 * Add documentation
-* Add change log
-* Autosave aliases and settings and check other PVs
-
-### Done
-
-* Add basic AsynPortDriver for ELM3704
-    * Connects an AsynPortClient to the SDO port created from the SDO requests
-    * Supports setting main interface setting for measurement type
-    * Added secondary screen for detailed settings
-        * Sensor supply
-        * Scaler
-        * RTD element
-        * TC element
-        * Status string
-
+* Replace pass by const reference of primitive types (e.g. int) to pass by value
+* Change all references of channel (ch and channel) to be consistent
