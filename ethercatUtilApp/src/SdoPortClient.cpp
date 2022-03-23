@@ -10,8 +10,8 @@ SdoPortClient::SdoPortClient(const char* sdoPortName):
 }
 
 
-// Write to the port and wait until the readback changes
-asynStatus SdoPortClient::writeRead(const std::string &paramName, const epicsInt32 &value, const double &timeout)
+// Write to the port and wait until the readback matches (or time out)
+asynStatus SdoPortClient::writeRead(const std::string &paramName, const epicsInt32 &value, double timeout)
 {
     // Write to the value parameter
     asynStatus status = portClient.write(paramName, value);

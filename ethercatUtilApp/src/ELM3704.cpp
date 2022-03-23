@@ -27,48 +27,48 @@ ELM3704::ELM3704(const char* portName, const char* sdoPortName) : asynPortDriver
     // For each channel
     static const int NBUFF = 255;
     char str[NBUFF];
-    for (unsigned int ch=0; ch<4; ch++)
+    for (unsigned int channel=0; channel<4; channel++)
     {
         // Measurement type
-        epicsSnprintf(str, NBUFF, "CH%d:TYPE", ch+1);
-        createParam(str, asynParamInt32, &measurementType[ch]);
+        epicsSnprintf(str, NBUFF, "CH%d:TYPE", channel+1);
+        createParam(str, asynParamInt32, &measurementType[channel]);
         // Measurement subtype
-        epicsSnprintf(str, NBUFF, "CH%d:SUBTYPE", ch+1);
-        createParam(str, asynParamInt32, &measurementSubType[ch]);
+        epicsSnprintf(str, NBUFF, "CH%d:SUBTYPE", channel+1);
+        createParam(str, asynParamInt32, &measurementSubType[channel]);
         // Measurement type is loaded
-        epicsSnprintf(str, NBUFF, "CH%d:LOADED", ch+1);
-        createParam(str, asynParamInt32, &measurementTypeLoaded[ch]);
+        epicsSnprintf(str, NBUFF, "CH%d:LOADED", channel+1);
+        createParam(str, asynParamInt32, &measurementTypeLoaded[channel]);
 
         // Measurement sensor supply
-        epicsSnprintf(str, NBUFF, "CH%d:SENSOR_SUPPLY", ch+1);
-        createParam(str, asynParamInt32, &measurementSensorSupply[ch]);
+        epicsSnprintf(str, NBUFF, "CH%d:SENSOR_SUPPLY", channel+1);
+        createParam(str, asynParamInt32, &measurementSensorSupply[channel]);
 
         // RTD element
-        epicsSnprintf(str, NBUFF, "CH%d:RTD_ELEMENT_PAGE", ch+1);
-        createParam(str, asynParamInt32, &measurementRTDElementPage[ch]);
-        epicsSnprintf(str, NBUFF, "CH%d:RTD_ELEMENT", ch+1);
-        createParam(str, asynParamInt32, &measurementRTDElement[ch]);
+        epicsSnprintf(str, NBUFF, "CH%d:RTD_ELEMENT_PAGE", channel+1);
+        createParam(str, asynParamInt32, &measurementRTDElementPage[channel]);
+        epicsSnprintf(str, NBUFF, "CH%d:RTD_ELEMENT", channel+1);
+        createParam(str, asynParamInt32, &measurementRTDElement[channel]);
 
         // TC element
-        epicsSnprintf(str, NBUFF, "CH%d:TC_ELEMENT_PAGE", ch+1);
-        createParam(str, asynParamInt32, &measurementTCElementPage[ch]);
-        epicsSnprintf(str, NBUFF, "CH%d:TC_ELEMENT", ch+1);
-        createParam(str, asynParamInt32, &measurementTCElement[ch]);
+        epicsSnprintf(str, NBUFF, "CH%d:TC_ELEMENT_PAGE", channel+1);
+        createParam(str, asynParamInt32, &measurementTCElementPage[channel]);
+        epicsSnprintf(str, NBUFF, "CH%d:TC_ELEMENT", channel+1);
+        createParam(str, asynParamInt32, &measurementTCElement[channel]);
 
         // Measurement scaler
-        epicsSnprintf(str, NBUFF, "CH%d:SCALER", ch+1);
-        createParam(str, asynParamInt32, &measurementScaler[ch]);
+        epicsSnprintf(str, NBUFF, "CH%d:SCALER", channel+1);
+        createParam(str, asynParamInt32, &measurementScaler[channel]);
 
         // Status message
-        epicsSnprintf(str, NBUFF, "CH%d:STATUS", ch+1);
-        createParam(str, asynParamOctet, &channelStatusMessage[ch]);
+        epicsSnprintf(str, NBUFF, "CH%d:STATUS", channel+1);
+        createParam(str, asynParamOctet, &channelStatusMessage[channel]);
     }
 
     /* Initialise asyn parameters */
-    for (unsigned int ch=0; ch<4; ch++)
+    for (unsigned int channel=0; channel<4; channel++)
     {
         // Set status message string
-        setStringParam(channelStatusMessage[ch], "OK");
+        setStringParam(channelStatusMessage[channel], "OK");
 
         // TODO: get current parameter values and set interface options appropriately
     }
@@ -77,7 +77,7 @@ ELM3704::ELM3704(const char* portName, const char* sdoPortName) : asynPortDriver
 
 
 // Empty the subtype options list
-void ELM3704::writeNAOption(const int &param)
+void ELM3704::writeNAOption(int param)
 {
     static const char *strings[1] = { "N/A" };
     // Map values based to the corresponding 0x80n01:01 interface value
@@ -89,7 +89,7 @@ void ELM3704::writeNAOption(const int &param)
 
 
 // Called to set channel to first valid subtype after changing measurement type
-void ELM3704::setFirstSubTypeAfterTypeChanged(const unsigned int &channel, const int &value, const std::string &statusString)
+void ELM3704::setFirstSubTypeAfterTypeChanged(unsigned int channel, int value, const std::string &statusString)
 {
     // Update asynParameter
     setIntegerParam(measurementSubType[channel], value);
@@ -100,7 +100,7 @@ void ELM3704::setFirstSubTypeAfterTypeChanged(const unsigned int &channel, const
 }
 
 // Empty the subtype options list
-void ELM3704::writeNASubTypeOption(const unsigned int &channel)
+void ELM3704::writeNASubTypeOption(unsigned int channel)
 {
     // Set options
     writeNAOption(measurementSubType[channel]);
@@ -110,7 +110,7 @@ void ELM3704::writeNASubTypeOption(const unsigned int &channel)
 
 
 // Write the voltage subtype options
-void ELM3704::writeVoltageSubTypeOptions(const unsigned int &channel)
+void ELM3704::writeVoltageSubTypeOptions(unsigned int channel)
 {
     static const char *strings[13] = {
         "+/- 60V",
@@ -138,7 +138,7 @@ void ELM3704::writeVoltageSubTypeOptions(const unsigned int &channel)
 
 
 // Write current subtype options
-void ELM3704::writeCurrentSubTypeOptions(const unsigned int &channel)
+void ELM3704::writeCurrentSubTypeOptions(unsigned int channel)
 {
     static const char *strings[4] = {
         "+/- 20mA",
@@ -157,7 +157,7 @@ void ELM3704::writeCurrentSubTypeOptions(const unsigned int &channel)
 
 
 // Write potentiometer subtype options
-void ELM3704::writePotentiometerSubTypeOptions(const unsigned int &channel)
+void ELM3704::writePotentiometerSubTypeOptions(unsigned int channel)
 {
     static const char *strings[2] = {
         "3 wire",
@@ -174,7 +174,7 @@ void ELM3704::writePotentiometerSubTypeOptions(const unsigned int &channel)
 
 
 // Write thermocouple subtype options
-void ELM3704::writeThermocoupleSubTypeOptions(const unsigned int &channel)
+void ELM3704::writeThermocoupleSubTypeOptions(unsigned int channel)
 {
     static const char *strings[3] = {
         "80mV",
@@ -192,7 +192,7 @@ void ELM3704::writeThermocoupleSubTypeOptions(const unsigned int &channel)
 
 
 // Write integrated electronics piezo-electric subtype options
-void ELM3704::writeIEPESubTypeOptions(const unsigned int &channel)
+void ELM3704::writeIEPESubTypeOptions(unsigned int channel)
 {
     static const char *strings[5] = {
         "+/- 10V",
@@ -212,7 +212,7 @@ void ELM3704::writeIEPESubTypeOptions(const unsigned int &channel)
 
 
 // Write strain gauge full bridge subtype options
-void ELM3704::writeStrainGaugeFBSubTypeOptions(const unsigned int &channel)
+void ELM3704::writeStrainGaugeFBSubTypeOptions(unsigned int channel)
 {
     static const char *strings[6] = {
         "4 wire 2mV/V",
@@ -233,7 +233,7 @@ void ELM3704::writeStrainGaugeFBSubTypeOptions(const unsigned int &channel)
 
 
 // Write strain gauge half bridge subtype options
-void ELM3704::writeStrainGaugeHBSubTypeOptions(const unsigned int &channel)
+void ELM3704::writeStrainGaugeHBSubTypeOptions(unsigned int channel)
 {
     static const char *strings[4] = {
         "3 wire 2mV/V",
@@ -252,7 +252,7 @@ void ELM3704::writeStrainGaugeHBSubTypeOptions(const unsigned int &channel)
 
 
 // Write strain gauge quarter bridge 2 wire subtype options
-void ELM3704::writeStrainGaugeQB2WireSubTypeOptions(const unsigned int &channel)
+void ELM3704::writeStrainGaugeQB2WireSubTypeOptions(unsigned int channel)
 {
     static const char *strings[8] = {
         "120R 2mV/V comp",
@@ -275,7 +275,7 @@ void ELM3704::writeStrainGaugeQB2WireSubTypeOptions(const unsigned int &channel)
 
 
 // Write strain gauge quarter bridge 3 wire subtype options
-void ELM3704::writeStrainGaugeQB3WireSubTypeOptions(const unsigned int &channel)
+void ELM3704::writeStrainGaugeQB3WireSubTypeOptions(unsigned int channel)
 {
     static const char *strings[8] = {
         "120R 2mV/V comp",
@@ -298,7 +298,7 @@ void ELM3704::writeStrainGaugeQB3WireSubTypeOptions(const unsigned int &channel)
 
 
 // Write strain gauge quarter bridge 3 wire subtype options
-void ELM3704::writeRTDSubTypeOptions(const unsigned int &channel)
+void ELM3704::writeRTDSubTypeOptions(unsigned int channel)
 {
     static const char *strings[15] = {
         "2 wire 5k",
@@ -328,7 +328,7 @@ void ELM3704::writeRTDSubTypeOptions(const unsigned int &channel)
 
 
 // Empty the sensor supply options list
-void ELM3704::writeNASensorSupplyOption(const unsigned int &channel)
+void ELM3704::writeNASensorSupplyOption(unsigned int channel)
 {
     // Set options
     writeNAOption(measurementSensorSupply[channel]);
@@ -336,7 +336,7 @@ void ELM3704::writeNASensorSupplyOption(const unsigned int &channel)
 
 
 // Write the sensor supply options for strain gauge measurements
-void ELM3704::writeStrainGaugeSensorSupplyOptions(const unsigned int &channel)
+void ELM3704::writeStrainGaugeSensorSupplyOptions(unsigned int channel)
 {
     static const char *strings[12] = {
         "0.0V",
@@ -361,7 +361,7 @@ void ELM3704::writeStrainGaugeSensorSupplyOptions(const unsigned int &channel)
 
 
 // Write the sensor supply options for IEPE measurements
-void ELM3704::writeIEPESensorySupplyOption(const unsigned int &channel)
+void ELM3704::writeIEPESensorySupplyOption(unsigned int channel)
 {
     // IEPE measurement type just fixes sensory supply to local control
     static const char *strings[1] = {
@@ -376,7 +376,7 @@ void ELM3704::writeIEPESensorySupplyOption(const unsigned int &channel)
 
 
 // Empty the RTD page options list
-void ELM3704::writeNARTDElementPageOption(const unsigned int &channel)
+void ELM3704::writeNARTDElementPageOption(unsigned int channel)
 {
     // Set options
     writeNAOption(measurementRTDElementPage[channel]);
@@ -386,7 +386,7 @@ void ELM3704::writeNARTDElementPageOption(const unsigned int &channel)
 
 
 // Write the RTD page options
-void ELM3704::writeRTDElementPageOptions(const unsigned int &channel)
+void ELM3704::writeRTDElementPageOptions(unsigned int channel)
 {
     static const char *strings[3] = {
         "1",
@@ -402,7 +402,7 @@ void ELM3704::writeRTDElementPageOptions(const unsigned int &channel)
 
 
 // Empty the RTD element options list
-void ELM3704::writeNARTDElementOption(const unsigned int &channel)
+void ELM3704::writeNARTDElementOption(unsigned int channel)
 {
     // Set options
     writeNAOption(measurementRTDElement[channel]);
@@ -410,7 +410,7 @@ void ELM3704::writeNARTDElementOption(const unsigned int &channel)
 
 
 // Write the RTD element options list
-void ELM3704::writeRTDElementOptions(const unsigned int &channel, const unsigned int &page)
+void ELM3704::writeRTDElementOptions(unsigned int channel, unsigned int page)
 {
     static const char *firstPageStrings[16] = {
         "None",
@@ -496,7 +496,7 @@ void ELM3704::writeRTDElementOptions(const unsigned int &channel, const unsigned
 
 
 // Empty the TC page options list
-void ELM3704::writeNATCElementPageOption(const unsigned int &channel)
+void ELM3704::writeNATCElementPageOption(unsigned int channel)
 {
     // Set options
     writeNAOption(measurementTCElementPage[channel]);
@@ -506,7 +506,7 @@ void ELM3704::writeNATCElementPageOption(const unsigned int &channel)
 
 
 // Write the TC page options
-void ELM3704::writeTCElementPageOptions(const unsigned int &channel)
+void ELM3704::writeTCElementPageOptions(unsigned int channel)
 {
     static const char *strings[2] = {
         "1",
@@ -521,14 +521,14 @@ void ELM3704::writeTCElementPageOptions(const unsigned int &channel)
 
 
 // Empty the TC element options list
-void ELM3704::writeNATCElementOption(const unsigned int &channel)
+void ELM3704::writeNATCElementOption(unsigned int channel)
 {
     // Set options
     writeNAOption(measurementTCElement[channel]);
 }
 
 // Write the TC element options list
-void ELM3704::writeTCElementOptions(const unsigned int &channel, const unsigned int &page)
+void ELM3704::writeTCElementOptions(unsigned int channel, unsigned int page)
 {
     static const char *firstPageStrings[16] = {
         "K (-270..1372C)",
@@ -589,7 +589,7 @@ void ELM3704::writeTCElementOptions(const unsigned int &channel, const unsigned 
 }
 
 // Write default scaler options
-void ELM3704::writeDefaultScalerOptions(const unsigned int &channel)
+void ELM3704::writeDefaultScalerOptions(unsigned int channel)
 {
     static const char *strings[2] = {
         "Extended range",
@@ -604,7 +604,7 @@ void ELM3704::writeDefaultScalerOptions(const unsigned int &channel)
 
 
 // Write scaler options when measuring a thermocouple
-void ELM3704::writeThermocoupleScalerOptions(const unsigned int &channel)
+void ELM3704::writeThermocoupleScalerOptions(unsigned int channel)
 {
     static const char *strings[5] = {
         "Extended range",
@@ -622,7 +622,7 @@ void ELM3704::writeThermocoupleScalerOptions(const unsigned int &channel)
 
 
 // Set the parameter of a channel via the asynPortClient
-asynStatus ELM3704::setChannelParameter(const unsigned int &channel, const std::string &paramName, const unsigned int &value)
+asynStatus ELM3704::setChannelParameter(unsigned int channel, const std::string &paramName, unsigned int value)
 {
     asynStatus status;
 
@@ -645,7 +645,7 @@ asynStatus ELM3704::setChannelParameter(const unsigned int &channel, const std::
 
 
 // Change the Interface value of a channel via the asynPortClient
-asynStatus ELM3704::setChannelInterface(const unsigned int &channel, const unsigned int &value)
+asynStatus ELM3704::setChannelInterface(unsigned int channel, unsigned int value)
 {
     // Set the parameter
     asynStatus status = setChannelParameter(channel, "Interface", value);
@@ -659,7 +659,7 @@ asynStatus ELM3704::setChannelInterface(const unsigned int &channel, const unsig
 
 
 // Change the sensor supply value of a channel via the asynPortClient
-asynStatus ELM3704::setChannelSensorSupply(const unsigned int &channel, const unsigned int &value)
+asynStatus ELM3704::setChannelSensorSupply(unsigned int channel, unsigned int value)
 {
     // Set parameter
     return setChannelParameter(channel, "SensorSupply", value);
@@ -667,7 +667,7 @@ asynStatus ELM3704::setChannelSensorSupply(const unsigned int &channel, const un
 
 
 // Change the RTD element value of a channel via the asynPortClient
-asynStatus ELM3704::setChannelRTDElement(const unsigned int &channel, const unsigned int &value)
+asynStatus ELM3704::setChannelRTDElement(unsigned int channel, unsigned int value)
 {
     // Set parameter
     return setChannelParameter(channel, "RTDElement", value);
@@ -675,7 +675,7 @@ asynStatus ELM3704::setChannelRTDElement(const unsigned int &channel, const unsi
 
 
 // Change the RTD element value of a channel via the asynPortClient
-asynStatus ELM3704::setChannelTCElement(const unsigned int &channel, const unsigned int &value)
+asynStatus ELM3704::setChannelTCElement(unsigned int channel, unsigned int value)
 {
     // Set parameter
     return setChannelParameter(channel, "TCElement", value);
@@ -683,7 +683,7 @@ asynStatus ELM3704::setChannelTCElement(const unsigned int &channel, const unsig
 
 
 // Change the Scaler value of a channel via the asynPortClient
-asynStatus ELM3704::setChannelScaler(const unsigned int &channel, const unsigned int &value)
+asynStatus ELM3704::setChannelScaler(unsigned int channel, unsigned int value)
 {
     // Set parameter
     return setChannelParameter(channel, "Scaler", value);
@@ -691,7 +691,7 @@ asynStatus ELM3704::setChannelScaler(const unsigned int &channel, const unsigned
 
 
 // Method for reading a parameter using the SDO port client
-asynStatus ELM3704::readChannelSubSetting(const unsigned int &channel, const std::string &paramName, epicsInt32 &paramValue)
+asynStatus ELM3704::readChannelSubSetting(unsigned int channel, const std::string &paramName, epicsInt32 &paramValue)
 {
     std::string paramString = "CH" + std::to_string(channel+1) + ":" + paramName;
     return sdoPortClient.read(paramString, paramValue);
@@ -699,7 +699,7 @@ asynStatus ELM3704::readChannelSubSetting(const unsigned int &channel, const std
 
 
 // Method for reading sub-settings of a module (e.g. after interface change)
-asynStatus ELM3704::readCurrentChannelSubSettings(const unsigned int &channel)
+asynStatus ELM3704::readCurrentChannelSubSettings(unsigned int channel)
 {
     // Track overall status
     asynStatus status = asynSuccess;
@@ -740,14 +740,14 @@ asynStatus ELM3704::readCurrentChannelSubSettings(const unsigned int &channel)
 
 
 // Check and handle changes to the measurement type
-bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &value)
+bool ELM3704::checkIfMeasurementTypeChanged(int param, const epicsInt32 &value)
 {
-    for (unsigned int ch=0; ch<4; ch++)
+    for (unsigned int channel=0; channel<4; channel++)
     {
-        if (param == measurementType[ch])
+        if (param == measurementType[channel])
         {
             // Set the loaded parameter to loading for GUI update
-            setIntegerParam(measurementTypeLoaded[ch], 1);
+            setIntegerParam(measurementTypeLoaded[channel], 1);
             // Force the load
             callParamCallbacks();
 
@@ -763,133 +763,133 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
                 switch (value)
                 {
                     case Type::None:
-                        writeNASubTypeOption(ch);
-                        writeNASensorSupplyOption(ch);
-                        writeNARTDElementPageOption(ch);
-                        writeNARTDElementOption(ch);
-                        writeNATCElementPageOption(ch);
-                        writeNATCElementOption(ch);
-                        writeDefaultScalerOptions(ch);
+                        writeNASubTypeOption(channel);
+                        writeNASensorSupplyOption(channel);
+                        writeNARTDElementPageOption(channel);
+                        writeNARTDElementOption(channel);
+                        writeNATCElementPageOption(channel);
+                        writeNATCElementOption(channel);
+                        writeDefaultScalerOptions(channel);
                         break;
 
                     case Type::Voltage:
-                        writeVoltageSubTypeOptions(ch);
-                        writeNASensorSupplyOption(ch);
-                        writeNARTDElementPageOption(ch);
-                        writeNARTDElementOption(ch);
-                        writeNATCElementPageOption(ch);
-                        writeNATCElementOption(ch);
-                        writeDefaultScalerOptions(ch);
+                        writeVoltageSubTypeOptions(channel);
+                        writeNASensorSupplyOption(channel);
+                        writeNARTDElementPageOption(channel);
+                        writeNARTDElementOption(channel);
+                        writeNATCElementPageOption(channel);
+                        writeNATCElementOption(channel);
+                        writeDefaultScalerOptions(channel);
                         break;
 
                     case Type::Current:
-                        writeCurrentSubTypeOptions(ch);
-                        writeNASensorSupplyOption(ch);
-                        writeNARTDElementPageOption(ch);
-                        writeNARTDElementOption(ch);
-                        writeNATCElementPageOption(ch);
-                        writeNATCElementOption(ch);
-                        writeDefaultScalerOptions(ch);
+                        writeCurrentSubTypeOptions(channel);
+                        writeNASensorSupplyOption(channel);
+                        writeNARTDElementPageOption(channel);
+                        writeNARTDElementOption(channel);
+                        writeNATCElementPageOption(channel);
+                        writeNATCElementOption(channel);
+                        writeDefaultScalerOptions(channel);
                         break;
 
                     case Type::Potentiometer:
-                        writePotentiometerSubTypeOptions(ch);
-                        writeNASensorSupplyOption(ch);
-                        writeNARTDElementPageOption(ch);
-                        writeNARTDElementOption(ch);
-                        writeNATCElementPageOption(ch);
-                        writeNATCElementOption(ch);
-                        writeDefaultScalerOptions(ch);
+                        writePotentiometerSubTypeOptions(channel);
+                        writeNASensorSupplyOption(channel);
+                        writeNARTDElementPageOption(channel);
+                        writeNARTDElementOption(channel);
+                        writeNATCElementPageOption(channel);
+                        writeNATCElementOption(channel);
+                        writeDefaultScalerOptions(channel);
                         break;
 
                     case Type::Thermocouple:
-                        writeThermocoupleSubTypeOptions(ch);
-                        writeNASensorSupplyOption(ch);
-                        writeNARTDElementPageOption(ch);
-                        writeNARTDElementOption(ch);
+                        writeThermocoupleSubTypeOptions(channel);
+                        writeNASensorSupplyOption(channel);
+                        writeNARTDElementPageOption(channel);
+                        writeNARTDElementOption(channel);
                         // The initial 80mV subtype doesn't use elements
-                        writeNATCElementPageOption(ch);
-                        writeNATCElementOption(ch);
-                        writeThermocoupleScalerOptions(ch);
+                        writeNATCElementPageOption(channel);
+                        writeNATCElementOption(channel);
+                        writeThermocoupleScalerOptions(channel);
                         break;
 
                     case Type::IEPiezoElectric:
-                        writeIEPESubTypeOptions(ch);
-                        writeIEPESensorySupplyOption(ch);
-                        writeNARTDElementPageOption(ch);
-                        writeNARTDElementOption(ch);
-                        writeNATCElementPageOption(ch);
-                        writeNATCElementOption(ch);
-                        writeDefaultScalerOptions(ch);
+                        writeIEPESubTypeOptions(channel);
+                        writeIEPESensorySupplyOption(channel);
+                        writeNARTDElementPageOption(channel);
+                        writeNARTDElementOption(channel);
+                        writeNATCElementPageOption(channel);
+                        writeNATCElementOption(channel);
+                        writeDefaultScalerOptions(channel);
                         break;
 
                     case Type::StrainGaugeFullBridge:
-                        writeStrainGaugeFBSubTypeOptions(ch);
-                        writeStrainGaugeSensorSupplyOptions(ch);
-                        writeNARTDElementPageOption(ch);
-                        writeNARTDElementOption(ch);
-                        writeNATCElementPageOption(ch);
-                        writeNATCElementOption(ch);
-                        writeDefaultScalerOptions(ch);
+                        writeStrainGaugeFBSubTypeOptions(channel);
+                        writeStrainGaugeSensorSupplyOptions(channel);
+                        writeNARTDElementPageOption(channel);
+                        writeNARTDElementOption(channel);
+                        writeNATCElementPageOption(channel);
+                        writeNATCElementOption(channel);
+                        writeDefaultScalerOptions(channel);
                         break;
 
                     case Type::StrainGaugeHalfBridge:
-                        writeStrainGaugeHBSubTypeOptions(ch);
-                        writeStrainGaugeSensorSupplyOptions(ch);
-                        writeNARTDElementPageOption(ch);
-                        writeNARTDElementOption(ch);
-                        writeNATCElementPageOption(ch);
-                        writeNATCElementOption(ch);
-                        writeDefaultScalerOptions(ch);
+                        writeStrainGaugeHBSubTypeOptions(channel);
+                        writeStrainGaugeSensorSupplyOptions(channel);
+                        writeNARTDElementPageOption(channel);
+                        writeNARTDElementOption(channel);
+                        writeNATCElementPageOption(channel);
+                        writeNATCElementOption(channel);
+                        writeDefaultScalerOptions(channel);
                         break;
 
                     case Type::StrainGaugeQuarterBridge2Wire:
-                        writeStrainGaugeQB2WireSubTypeOptions(ch);
-                        writeStrainGaugeSensorSupplyOptions(ch);
-                        writeNARTDElementPageOption(ch);
-                        writeNARTDElementOption(ch);
-                        writeNATCElementPageOption(ch);
-                        writeNATCElementOption(ch);
-                        writeDefaultScalerOptions(ch);
+                        writeStrainGaugeQB2WireSubTypeOptions(channel);
+                        writeStrainGaugeSensorSupplyOptions(channel);
+                        writeNARTDElementPageOption(channel);
+                        writeNARTDElementOption(channel);
+                        writeNATCElementPageOption(channel);
+                        writeNATCElementOption(channel);
+                        writeDefaultScalerOptions(channel);
                         break;
 
                     case Type::StrainGaugeQuarterBridge3Wire:
-                        writeStrainGaugeQB3WireSubTypeOptions(ch);
-                        writeStrainGaugeSensorSupplyOptions(ch);
-                        writeNARTDElementPageOption(ch);
-                        writeNARTDElementOption(ch);
-                        writeNATCElementPageOption(ch);
-                        writeNATCElementOption(ch);
-                        writeDefaultScalerOptions(ch);
+                        writeStrainGaugeQB3WireSubTypeOptions(channel);
+                        writeStrainGaugeSensorSupplyOptions(channel);
+                        writeNARTDElementPageOption(channel);
+                        writeNARTDElementOption(channel);
+                        writeNATCElementPageOption(channel);
+                        writeNATCElementOption(channel);
+                        writeDefaultScalerOptions(channel);
                         break;
 
                     case Type::RTD:
-                        writeRTDSubTypeOptions(ch);
-                        writeNASensorSupplyOption(ch);
-                        writeRTDElementPageOptions(ch);
-                        writeRTDElementOptions(ch);
-                        writeNATCElementPageOption(ch);
-                        writeNATCElementOption(ch);
-                        writeDefaultScalerOptions(ch);
+                        writeRTDSubTypeOptions(channel);
+                        writeNASensorSupplyOption(channel);
+                        writeRTDElementPageOptions(channel);
+                        writeRTDElementOptions(channel);
+                        writeNATCElementPageOption(channel);
+                        writeNATCElementOption(channel);
+                        writeDefaultScalerOptions(channel);
                         break;
 
                     default:
-                        writeNASubTypeOption(ch);
-                        writeNASensorSupplyOption(ch);
-                        writeNARTDElementPageOption(ch);
-                        writeNARTDElementOption(ch);
-                        writeDefaultScalerOptions(ch);
+                        writeNASubTypeOption(channel);
+                        writeNASensorSupplyOption(channel);
+                        writeNARTDElementPageOption(channel);
+                        writeNARTDElementOption(channel);
+                        writeDefaultScalerOptions(channel);
                         break;
                 }
             } catch (const std::runtime_error &e)
             {
                 // Force reload anyway and rethrow
-                setIntegerParam(measurementTypeLoaded[ch], 0);
+                setIntegerParam(measurementTypeLoaded[channel], 0);
                 throw e;
             }
 
             // Set the loaded parameter to done
-            setIntegerParam(measurementTypeLoaded[ch], 0);
+            setIntegerParam(measurementTypeLoaded[channel], 0);
 
             // Signal that it was the type that changed
             return true;
@@ -903,18 +903,18 @@ bool ELM3704::checkIfMeasurementTypeChanged(const int &param, const epicsInt32 &
 
 
 // Check and handle changes to the measurement subtype
-bool ELM3704::checkIfMeasurementSubTypeChanged(const int &param, const epicsInt32 &value)
+bool ELM3704::checkIfMeasurementSubTypeChanged(int param, const epicsInt32 &value)
 {
-    for (unsigned int ch=0; ch<4; ch++)
+    for (unsigned int channel=0; channel<4; channel++)
     {
-        if (param == measurementSubType[ch])
+        if (param == measurementSubType[channel])
         {
             // Check if we are in TC mode and moving from 80mV <-> CJC, CJC RTD
-            checkIfSubTypeOptionChangingBetweenTCTypes(ch, value);
+            checkIfSubTypeOptionChangingBetweenTCTypes(channel, value);
 
             // Now set interface
-            printf("Channel %d measurement subtype changed to %d\n", ch, value);
-            setChannelInterface(ch, value);
+            printf("Channel %d measurement subtype changed to %d\n", channel, value);
+            setChannelInterface(channel, value);
             return true;
         }
     }
@@ -924,14 +924,14 @@ bool ELM3704::checkIfMeasurementSubTypeChanged(const int &param, const epicsInt3
 
 
 // Check and handle changes to the sensor supply option
-bool ELM3704::checkIfSensorSupplyOptionChanged(const int &param, const epicsInt32 &value)
+bool ELM3704::checkIfSensorSupplyOptionChanged(int param, const epicsInt32 &value)
 {
-    for (unsigned int ch=0; ch<4; ch++)
+    for (unsigned int channel=0; channel<4; channel++)
     {
-        if (param == measurementSensorSupply[ch])
+        if (param == measurementSensorSupply[channel])
         {
-            printf("Channel %d sensor supply option changed to %d\n", ch, value);
-            setChannelSensorSupply(ch, value);
+            printf("Channel %d sensor supply option changed to %d\n", channel, value);
+            setChannelSensorSupply(channel, value);
             return true;
         }
     }
@@ -940,18 +940,18 @@ bool ELM3704::checkIfSensorSupplyOptionChanged(const int &param, const epicsInt3
 
 
 // Check and handle changes to the RTD page
-bool ELM3704::checkIfRTDPageChanged(const int &param, const epicsInt32 &value)
+bool ELM3704::checkIfRTDPageChanged(int param, const epicsInt32 &value)
 {
-    for (unsigned int ch=0; ch<4; ch++)
+    for (unsigned int channel=0; channel<4; channel++)
     {
-        if (param == measurementRTDElementPage[ch])
+        if (param == measurementRTDElementPage[channel])
         {
             // Set the loaded parameter to loading for GUI update
-            setIntegerParam(measurementTypeLoaded[ch], 1);
+            setIntegerParam(measurementTypeLoaded[channel], 1);
             callParamCallbacks();
-            printf("Channel %d RTD element page changed to %d\n", ch, value);
-            writeRTDElementOptions(ch, value);
-            setIntegerParam(measurementTypeLoaded[ch], 0);
+            printf("Channel %d RTD element page changed to %d\n", channel, value);
+            writeRTDElementOptions(channel, value);
+            setIntegerParam(measurementTypeLoaded[channel], 0);
             return true;
         }
     }
@@ -960,14 +960,14 @@ bool ELM3704::checkIfRTDPageChanged(const int &param, const epicsInt32 &value)
 
 
 // Check and handle changes to the RTD option
-bool ELM3704::checkIfRTDOptionChanged(const int &param, const epicsInt32 &value)
+bool ELM3704::checkIfRTDOptionChanged(int param, const epicsInt32 &value)
 {
-    for (unsigned int ch=0; ch<4; ch++)
+    for (unsigned int channel=0; channel<4; channel++)
     {
-        if (param == measurementRTDElement[ch])
+        if (param == measurementRTDElement[channel])
         {
-            printf("Channel %d RTD element option changed to %d\n", ch, value);
-            setChannelRTDElement(ch, value);
+            printf("Channel %d RTD element option changed to %d\n", channel, value);
+            setChannelRTDElement(channel, value);
             return true;
         }
     }
@@ -976,18 +976,18 @@ bool ELM3704::checkIfRTDOptionChanged(const int &param, const epicsInt32 &value)
 
 
 // Check and handle changes to the TC page
-bool ELM3704::checkIfTCPageChanged(const int &param, const epicsInt32 &value)
+bool ELM3704::checkIfTCPageChanged(int param, const epicsInt32 &value)
 {
-    for (unsigned int ch=0; ch<4; ch++)
+    for (unsigned int channel=0; channel<4; channel++)
     {
-        if (param == measurementTCElementPage[ch])
+        if (param == measurementTCElementPage[channel])
         {
             // Set the loaded parameter to loading for GUI update
-            setIntegerParam(measurementTypeLoaded[ch], 1);
+            setIntegerParam(measurementTypeLoaded[channel], 1);
             callParamCallbacks();
-            printf("Channel %d TC element page changed to %d\n", ch, value);
-            writeTCElementOptions(ch, value);
-            setIntegerParam(measurementTypeLoaded[ch], 0);
+            printf("Channel %d TC element page changed to %d\n", channel, value);
+            writeTCElementOptions(channel, value);
+            setIntegerParam(measurementTypeLoaded[channel], 0);
             return true;
         }
     }
@@ -996,14 +996,14 @@ bool ELM3704::checkIfTCPageChanged(const int &param, const epicsInt32 &value)
 
 
 // Check and handle changes to the TC option
-bool ELM3704::checkIfTCOptionChanged(const int &param, const epicsInt32 &value)
+bool ELM3704::checkIfTCOptionChanged(int param, const epicsInt32 &value)
 {
-    for (unsigned int ch=0; ch<4; ch++)
+    for (unsigned int channel=0; channel<4; channel++)
     {
-        if (param == measurementTCElement[ch])
+        if (param == measurementTCElement[channel])
         {
-            printf("Channel %d TC element option changed to %d\n", ch, value);
-            setChannelTCElement(ch, value);
+            printf("Channel %d TC element option changed to %d\n", channel, value);
+            setChannelTCElement(channel, value);
             return true;
         }
     }
@@ -1011,14 +1011,14 @@ bool ELM3704::checkIfTCOptionChanged(const int &param, const epicsInt32 &value)
 }
 
 // Check and handle changes to the scaler option
-bool ELM3704::checkIfScalerOptionChanged(const int &param, const epicsInt32 &value)
+bool ELM3704::checkIfScalerOptionChanged(int param, const epicsInt32 &value)
 {
-    for (unsigned int ch=0; ch<4; ch++)
+    for (unsigned int channel=0; channel<4; channel++)
     {
-        if (param == measurementScaler[ch])
+        if (param == measurementScaler[channel])
         {
-            printf("Channel %d scaler option changed to %d\n", ch, value);
-            setChannelScaler(ch, value);
+            printf("Channel %d scaler option changed to %d\n", channel, value);
+            setChannelScaler(channel, value);
             return true;
         }
     }
@@ -1049,7 +1049,6 @@ void ELM3704::checkIfSubTypeOptionChangingBetweenTCTypes(unsigned int channel, c
         if (currentSubType == TCType::cjc || currentSubType == TCType::cjcrtd)
         {
             // Hide TC element options
-            printf("Channel %d going from CJC to 80mV\n", channel);
             writeNATCElementPageOption(channel);
             writeNATCElementOption(channel);
         }
@@ -1063,7 +1062,6 @@ void ELM3704::checkIfSubTypeOptionChangingBetweenTCTypes(unsigned int channel, c
         if (currentSubType == TCType::voltage)
         {
             // Show TC element options
-            printf("Channel %d going from 80mV to CJC\n", channel);
             writeTCElementPageOptions(channel);
             writeTCElementOptions(channel);
         }
@@ -1124,7 +1122,7 @@ asynStatus ELM3704::writeInt32(asynUser *pasynUser, epicsInt32 value)
 
 
 // Method for updating channel status string
-void ELM3704::updateChannelStatusString(const unsigned int &channel, const std::string &string, const epicsAlarmSeverity &severity)
+void ELM3704::updateChannelStatusString(unsigned int channel, const std::string &string, const epicsAlarmSeverity &severity)
 {
     setStringParam(channelStatusMessage[channel], string);
     setParamAlarmSeverity(channelStatusMessage[channel], severity);
