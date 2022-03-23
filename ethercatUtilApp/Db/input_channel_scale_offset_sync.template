@@ -18,6 +18,7 @@ record(seq, "$(P):$(R):CH$(CHANNEL):SCALE:SYNC")
 {
     field(DESC, "Copy scale and offset values")
     field(SCAN, "Passive")
+    field(PINI, "YES")
     field(DOL1, "$(P):$(R):CH$(CHANNEL):SCALE CP")
     field(DOL2, "$(P):$(R):CH$(CHANNEL):OFFSET CP")
     field(LNK1, "$(OUTPUT_SCALE_PV)")
