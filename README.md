@@ -52,8 +52,8 @@ asyn port.
 
 ### To do
 
-* Test module with actual signals
 * Add support for configuring ELM3704 multi-purpose modules
     * Add reset module option
     * Replace print with proper logging
+    * Test module with different input signal types
 * Add documentation
