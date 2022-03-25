@@ -18,9 +18,10 @@
 ## Info
 
 # % gui, $(name), groupHeading, Info
-# % gui, $(name), readback,     Position,            $(P):$(R):POSITION
-# % gui, $(name), readback,     Module type,         $(P):$(R):MODULE_TYPE
-# % gui, $(name), readback,     Channel number,      $(P):$(R):CH$(CHANNEL):CHANNEL
+# % gui, $(name), readback,     Position,        $(P):$(R):POSITION
+# % gui, $(name), readback,     Module type,     $(P):$(R):MODULE_TYPE
+# % gui, $(name), readback,     Channel number,  $(P):$(R):CH$(CHANNEL):CHANNEL
+# % gui, $(name), readback,     Status,          $(P):$(R):CH$(CHANNEL):STATUS
 # % gui, $(name), groupExit,    InfoExit
 
 ## Measurement settings

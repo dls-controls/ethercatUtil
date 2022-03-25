@@ -80,7 +80,7 @@
     <row_0_row_height>28</row_0_row_height>
     <row_0_row_tooltip>Info</row_0_row_tooltip>
     <row_0_row_mode>2</row_0_row_mode>
-    <row_count>14</row_count>
+    <row_count>15</row_count>
     <widget typeId="org.csstudio.opibuilder.widgets.groupingContainer" version="1.0.0">
       <widget_type>Grouping Container</widget_type>
       <font>
@@ -252,6 +252,59 @@
         <color name="Text: FG" red="0" green="0" blue="0" />
       </foreground_color>
       <border_alarm_sensitive>false</border_alarm_sensitive>
+      <widget typeId="org.csstudio.opibuilder.widgets.TextUpdate" version="1.0.0">
+        <widget_type>Text Update</widget_type>
+        <forecolor_alarm_sensitive>true</forecolor_alarm_sensitive>
+        <horizontal_alignment>1</horizontal_alignment>
+        <font>
+          <opifont.name fontName="Arial" height="11" style="1">Default Bold</opifont.name>
+        </font>
+        <background_color>
+          <color name="Monitor: BG" red="64" green="64" blue="64" />
+        </background_color>
+        <foreground_color>
+          <color name="Monitor: FG" red="96" green="255" blue="96" />
+        </foreground_color>
+        <border_alarm_sensitive>false</border_alarm_sensitive>
+        <height>25</height>
+        <wrap_words>true</wrap_words>
+        <rules>
+          <rule name="WaveformString" out_exp="false" prop_id="format_type">
+            <exp bool_exp="pvStr0 == 'waveform'">
+              <value>4</value>
+            </exp>
+            <pv trig="true">$(P):$(R):CH$(CHANNEL):STATUS.RTYP</pv>
+          </rule>
+        </rules>
+        <width>200</width>
+        <x>0</x>
+        <y>1</y>
+        <scale_options>
+          <width_scalable>false</width_scalable>
+          <height_scalable>false</height_scalable>
+          <keep_wh_ratio>false</keep_wh_ratio>
+        </scale_options>
+        <name>auto(readback|Status)</name>
+        <pv_name>$(P):$(R):CH$(CHANNEL):STATUS</pv_name>
+      </widget>
+      <height>28</height>
+    </widget>
+    <row_4_row_name>Status</row_4_row_name>
+    <row_4_row_height>28</row_4_row_height>
+    <row_4_row_tooltip>Status</row_4_row_tooltip>
+    <row_4_row_mode>0</row_4_row_mode>
+    <widget typeId="org.csstudio.opibuilder.widgets.groupingContainer" version="1.0.0">
+      <widget_type>Grouping Container</widget_type>
+      <font>
+        <opifont.name fontName="Arial" height="11" style="0">Default</opifont.name>
+      </font>
+      <background_color>
+        <color name="Canvas" red="200" green="200" blue="200" />
+      </background_color>
+      <foreground_color>
+        <color name="Text: FG" red="0" green="0" blue="0" />
+      </foreground_color>
+      <border_alarm_sensitive>false</border_alarm_sensitive>
       <widget typeId="org.csstudio.opibuilder.widgets.Rectangle">
         <widget_type>Rectangle</widget_type>
         <transparent>true</transparent>
@@ -277,10 +330,10 @@
       </widget>
       <height>28</height>
     </widget>
-    <row_4_row_name>Measurement</row_4_row_name>
-    <row_4_row_height>28</row_4_row_height>
-    <row_4_row_tooltip>Measurement</row_4_row_tooltip>
-    <row_4_row_mode>3</row_4_row_mode>
+    <row_5_row_name>Measurement</row_5_row_name>
+    <row_5_row_height>28</row_5_row_height>
+    <row_5_row_tooltip>Measurement</row_5_row_tooltip>
+    <row_5_row_mode>3</row_5_row_mode>
     <widget typeId="org.csstudio.opibuilder.widgets.groupingContainer" version="1.0.0">
       <widget_type>Grouping Container</widget_type>
       <font>
@@ -356,10 +409,10 @@
       </widget>
       <height>28</height>
     </widget>
-    <row_5_row_name>Type</row_5_row_name>
-    <row_5_row_height>28</row_5_row_height>
-    <row_5_row_tooltip>Type</row_5_row_tooltip>
-    <row_5_row_mode>0</row_5_row_mode>
+    <row_6_row_name>Type</row_6_row_name>
+    <row_6_row_height>28</row_6_row_height>
+    <row_6_row_tooltip>Type</row_6_row_tooltip>
+    <row_6_row_mode>0</row_6_row_mode>
     <widget typeId="org.csstudio.opibuilder.widgets.groupingContainer" version="1.0.0">
       <widget_type>Grouping Container</widget_type>
       <font>
@@ -435,10 +488,10 @@
       </widget>
       <height>28</height>
     </widget>
-    <row_6_row_name>Subtype</row_6_row_name>
-    <row_6_row_height>28</row_6_row_height>
-    <row_6_row_tooltip>Subtype</row_6_row_tooltip>
-    <row_6_row_mode>0</row_6_row_mode>
+    <row_7_row_name>Subtype</row_7_row_name>
+    <row_7_row_height>28</row_7_row_height>
+    <row_7_row_tooltip>Subtype</row_7_row_tooltip>
+    <row_7_row_mode>0</row_7_row_mode>
     <widget typeId="org.csstudio.opibuilder.widgets.groupingContainer" version="1.0.0">
       <widget_type>Grouping Container</widget_type>
       <font>
@@ -476,10 +529,10 @@
       </widget>
       <height>28</height>
     </widget>
-    <row_7_row_name>Miscellaneous</row_7_row_name>
-    <row_7_row_height>28</row_7_row_height>
-    <row_7_row_tooltip>Miscellaneous</row_7_row_tooltip>
-    <row_7_row_mode>3</row_7_row_mode>
+    <row_8_row_name>Miscellaneous</row_8_row_name>
+    <row_8_row_height>28</row_8_row_height>
+    <row_8_row_tooltip>Miscellaneous</row_8_row_tooltip>
+    <row_8_row_mode>3</row_8_row_mode>
     <widget typeId="org.csstudio.opibuilder.widgets.groupingContainer" version="1.0.0">
       <widget_type>Grouping Container</widget_type>
       <font>
@@ -555,10 +608,10 @@
       </widget>
       <height>28</height>
     </widget>
-    <row_8_row_name>Scaler</row_8_row_name>
-    <row_8_row_height>28</row_8_row_height>
-    <row_8_row_tooltip>Scaler</row_8_row_tooltip>
-    <row_8_row_mode>0</row_8_row_mode>
+    <row_9_row_name>Scaler</row_9_row_name>
+    <row_9_row_height>28</row_9_row_height>
+    <row_9_row_tooltip>Scaler</row_9_row_tooltip>
+    <row_9_row_mode>0</row_9_row_mode>
     <widget typeId="org.csstudio.opibuilder.widgets.groupingContainer" version="1.0.0">
       <widget_type>Grouping Container</widget_type>
       <font>
@@ -634,10 +687,10 @@
       </widget>
       <height>28</height>
     </widget>
-    <row_9_row_name>SG sensor supply</row_9_row_name>
-    <row_9_row_height>28</row_9_row_height>
-    <row_9_row_tooltip>SG sensor supply</row_9_row_tooltip>
-    <row_9_row_mode>0</row_9_row_mode>
+    <row_10_row_name>SG sensor supply</row_10_row_name>
+    <row_10_row_height>28</row_10_row_height>
+    <row_10_row_tooltip>SG sensor supply</row_10_row_tooltip>
+    <row_10_row_mode>0</row_10_row_mode>
     <widget typeId="org.csstudio.opibuilder.widgets.groupingContainer" version="1.0.0">
       <widget_type>Grouping Container</widget_type>
       <font>
@@ -713,10 +766,10 @@
       </widget>
       <height>28</height>
     </widget>
-    <row_10_row_name>RTD page</row_10_row_name>
-    <row_10_row_height>28</row_10_row_height>
-    <row_10_row_tooltip>RTD page</row_10_row_tooltip>
-    <row_10_row_mode>0</row_10_row_mode>
+    <row_11_row_name>RTD page</row_11_row_name>
+    <row_11_row_height>28</row_11_row_height>
+    <row_11_row_tooltip>RTD page</row_11_row_tooltip>
+    <row_11_row_mode>0</row_11_row_mode>
     <widget typeId="org.csstudio.opibuilder.widgets.groupingContainer" version="1.0.0">
       <widget_type>Grouping Container</widget_type>
       <font>
@@ -792,10 +845,10 @@
       </widget>
       <height>28</height>
     </widget>
-    <row_11_row_name>RTD element</row_11_row_name>
-    <row_11_row_height>28</row_11_row_height>
-    <row_11_row_tooltip>RTD element</row_11_row_tooltip>
-    <row_11_row_mode>0</row_11_row_mode>
+    <row_12_row_name>RTD element</row_12_row_name>
+    <row_12_row_height>28</row_12_row_height>
+    <row_12_row_tooltip>RTD element</row_12_row_tooltip>
+    <row_12_row_mode>0</row_12_row_mode>
     <widget typeId="org.csstudio.opibuilder.widgets.groupingContainer" version="1.0.0">
       <widget_type>Grouping Container</widget_type>
       <font>
@@ -871,10 +924,10 @@
       </widget>
       <height>28</height>
     </widget>
-    <row_12_row_name>TC page</row_12_row_name>
-    <row_12_row_height>28</row_12_row_height>
-    <row_12_row_tooltip>TC page</row_12_row_tooltip>
-    <row_12_row_mode>0</row_12_row_mode>
+    <row_13_row_name>TC page</row_13_row_name>
+    <row_13_row_height>28</row_13_row_height>
+    <row_13_row_tooltip>TC page</row_13_row_tooltip>
+    <row_13_row_mode>0</row_13_row_mode>
     <widget typeId="org.csstudio.opibuilder.widgets.groupingContainer" version="1.0.0">
       <widget_type>Grouping Container</widget_type>
       <font>
@@ -950,10 +1003,10 @@
       </widget>
       <height>28</height>
     </widget>
-    <row_13_row_name>TC element</row_13_row_name>
-    <row_13_row_height>28</row_13_row_height>
-    <row_13_row_tooltip>TC element</row_13_row_tooltip>
-    <row_13_row_mode>0</row_13_row_mode>
-    <height>406</height>
+    <row_14_row_name>TC element</row_14_row_name>
+    <row_14_row_height>28</row_14_row_height>
+    <row_14_row_tooltip>TC element</row_14_row_tooltip>
+    <row_14_row_mode>0</row_14_row_mode>
+    <height>435</height>
   </widget>
 </display>
