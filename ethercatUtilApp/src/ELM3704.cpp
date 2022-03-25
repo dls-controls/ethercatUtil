@@ -5,6 +5,10 @@
 
 #include <stdexcept>
 #include <string>
+#include <thread>
+#include <iostream>
+
+#include "ELM3704Properties.h"
 
 // For logging
 static const char *driverName = "ELM3704";
@@ -32,9 +36,11 @@ ELM3704::ELM3704(const char* portName, const char* sdoPortName) : asynPortDriver
         // Measurement type
         epicsSnprintf(str, NBUFF, "CH%d:TYPE", channel+1);
         createParam(str, asynParamInt32, &measurementType[channel]);
+
         // Measurement subtype
         epicsSnprintf(str, NBUFF, "CH%d:SUBTYPE", channel+1);
         createParam(str, asynParamInt32, &measurementSubType[channel]);
+
         // Measurement type is loaded
         epicsSnprintf(str, NBUFF, "CH%d:LOADED", channel+1);
         createParam(str, asynParamInt32, &measurementTypeLoaded[channel]);
@@ -64,15 +70,69 @@ ELM3704::ELM3704(const char* portName, const char* sdoPortName) : asynPortDriver
         createParam(str, asynParamOctet, &channelStatusMessage[channel]);
     }
 
-    /* Initialise asyn parameters */
-    for (unsigned int channel=0; channel<4; channel++)
-    {
-        // Set status message string
-        setStringParam(channelStatusMessage[channel], "OK");
+    // Initialise asyn parameters using a thread
+    initialiseThread = std::thread(&ELM3704::initialiseValues, this);
+}
 
-        // TODO: get current parameter values and set interface options appropriately
+
+// Initialise the asynParameter values based on current module settings
+void ELM3704::initialiseValues()
+{
+    std::cout << portName << ": initialising values" << std::endl;
+    // Wait for SDO asynPort to be ready
+    unsigned int tries = 0;
+    int parameterValue;
+    while (true)
+    {
+        if (readChannelSubSetting(0, "Interface", parameterValue) == asynSuccess)
+        {
+            printf("%s: SDO connection is up\n", portName);
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            break;
+        }
+        else
+        {
+            tries++;
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
     }
 
+    // Now fetch actual values
+    int interface, scaler, sensorSupply, RTDElement, TCElement;
+    int status = asynSuccess;
+    for (unsigned int channel=0; channel<4; channel++)
+    {
+        // Get current channel settings
+        status |= readChannelSubSetting(channel, "Interface", interface);
+        status |= readChannelSubSetting(channel, "Scaler", scaler);
+        status |= readChannelSubSetting(channel, "SensorSupply", sensorSupply);
+        status |= readChannelSubSetting(channel, "RTDElement", RTDElement);
+        status |= readChannelSubSetting(channel, "TCElement", TCElement);
+
+        printf(
+            "%s: channel %d settings: %d, %d, %d, %d, %d\n",
+            portName,
+            channel,
+            interface,
+            scaler,
+            sensorSupply,
+            RTDElement,
+            TCElement
+        );
+
+        // Set channel status string
+        if (status)
+        {
+            setStringParam(channelStatusMessage[channel], "Initialisation failed");
+        }
+        else
+        {
+            setStringParam(channelStatusMessage[channel], "OK");
+        }
+    }
+    // Reflect changes in asynParameter values
+    callParamCallbacks();
+    std::cout << portName << ": initialising values complete" << std::endl;
 }
 
 
@@ -112,218 +172,210 @@ void ELM3704::writeNASubTypeOption(unsigned int channel)
 // Write the voltage subtype options
 void ELM3704::writeVoltageSubTypeOptions(unsigned int channel)
 {
-    static const char *strings[13] = {
-        "+/- 60V",
-        "+/- 10V",
-        "+/- 5V",
-        "+/- 2.5V",
-        "+/- 1.25V",
-        "+/- 640mV",
-        "+/- 320mV",
-        "+/- 160mV",
-        "+/- 80mV",
-        "+/- 40mV",
-        "+/- 20mV",
-        "0-10V",
-        "0-5V",
-    };
-    // Map values based to the corresponding 0x80n01:01 interface value
-    static int values[13] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 14, 15 };
-    static int severities[13] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     // Update strings and values
-    doCallbacksEnum((char **)strings, values, severities, 13, measurementSubType[channel], 0);
+    doCallbacksEnum(
+        (char **)ELM3704Properties::voltageStrings,
+        ELM3704Properties::voltageValues,
+        ELM3704Properties::severities,
+        13,
+        measurementSubType[channel],
+        0
+    );
     // Set interface to first valid subtype
-    setFirstSubTypeAfterTypeChanged(channel, values[0], "Voltage set. Range: " + std::string(strings[0]));
+    setFirstSubTypeAfterTypeChanged(
+        channel,
+        ELM3704Properties::voltageValues[0],
+        "Voltage set. Range: " + std::string(ELM3704Properties::voltageStrings[0])
+    );
 }
 
 
 // Write current subtype options
 void ELM3704::writeCurrentSubTypeOptions(unsigned int channel)
 {
-    static const char *strings[4] = {
-        "+/- 20mA",
-        "0-20mA",
-        "4-20mA",
-        "4-20mA NAMUR",
-    };
-    // Map values based to the corresponding 0x80n01:01 interface value
-    static int values[4] = { 17, 18, 19, 20 };
-    static int severities[4] = { 0, 0, 0, 0 };
     // Update strings and values
-    doCallbacksEnum((char **)strings, values, severities, 4, measurementSubType[channel], 0);
+    doCallbacksEnum(
+        (char **)ELM3704Properties::currentStrings,
+        ELM3704Properties::currentValues,
+        ELM3704Properties::severities,
+        4,
+        measurementSubType[channel],
+        0
+    );
     // Set interface to first valid subtype
-    setFirstSubTypeAfterTypeChanged(channel, values[0], "Current set. Range: " + std::string(strings[0]));
+    setFirstSubTypeAfterTypeChanged(
+        channel,
+        ELM3704Properties::currentValues[0],
+        "Current set. Range: " + std::string(ELM3704Properties::currentStrings[0])
+    );
 }
 
 
 // Write potentiometer subtype options
 void ELM3704::writePotentiometerSubTypeOptions(unsigned int channel)
 {
-    static const char *strings[2] = {
-        "3 wire",
-        "5 wire",
-    };
-    // Map values based to the corresponding 0x80n01:01 interface value
-    static int values[2] = { 65, 66 };
-    static int severities[2] = { 0, 0 };
     // Update strings and values
-    doCallbacksEnum((char **)strings, values, severities, 2, measurementSubType[channel], 0);
+    doCallbacksEnum(
+        (char **)ELM3704Properties::potStrings,
+        ELM3704Properties::potValues,
+        ELM3704Properties::severities,
+        2,
+        measurementSubType[channel],
+        0
+    );
     // Set interface to first valid subtype
-    setFirstSubTypeAfterTypeChanged(channel, values[0], "Potentiometer set. Range: " + std::string(strings[0]));
+    setFirstSubTypeAfterTypeChanged(
+        channel,
+        ELM3704Properties::potValues[0],
+        "Potentiometer set. Type: " + std::string(ELM3704Properties::potStrings[0])
+    );
 }
 
 
 // Write thermocouple subtype options
 void ELM3704::writeThermocoupleSubTypeOptions(unsigned int channel)
 {
-    static const char *strings[3] = {
-        "80mV",
-        "CJC",
-        "CJC RTD",
-    };
-    // Map values based to the corresponding 0x80n01:01 interface value
-    static int values[3] = { 81, 86, 87 };
-    static int severities[3] = { 0, 0, 0 };
     // Update strings and values
-    doCallbacksEnum((char **)strings, values, severities, 3, measurementSubType[channel], 0);
+    doCallbacksEnum(
+        (char **)ELM3704Properties::TCStrings,
+        ELM3704Properties::TCValues,
+        ELM3704Properties::severities,
+        3,
+        measurementSubType[channel],
+        0
+    );
     // Set interface to first valid subtype
-    setFirstSubTypeAfterTypeChanged(channel, values[0], "Thermocouple set: " + std::string(strings[0]));
+    setFirstSubTypeAfterTypeChanged(
+        channel,
+        ELM3704Properties::TCValues[0],
+        "Thermocouple set. Type: " + std::string(ELM3704Properties::TCStrings[0])
+    );
 }
 
 
 // Write integrated electronics piezo-electric subtype options
 void ELM3704::writeIEPESubTypeOptions(unsigned int channel)
 {
-    static const char *strings[5] = {
-        "+/- 10V",
-        "+/- 5V",
-        "+/- 2.5V",
-        "0-20V",
-        "0-10V",
-    };
-    // Map values based to the corresponding 0x80n01:01 interface value
-    static int values[5] = { 97, 98, 99, 107, 108 };
-    static int severities[5] = { 0, 0, 0, 0, 0 };
     // Update strings and values
-    doCallbacksEnum((char **)strings, values, severities, 5, measurementSubType[channel], 0);
+    doCallbacksEnum(
+        (char **)ELM3704Properties::IEPEStrings,
+        ELM3704Properties::IEPEValues,
+        ELM3704Properties::severities,
+        5,
+        measurementSubType[channel],
+        0
+    );
     // Set interface to first valid subtype
-    setFirstSubTypeAfterTypeChanged(channel, values[0], "IEPE set. Range: " + std::string(strings[0]));
+    setFirstSubTypeAfterTypeChanged(
+        channel,
+        ELM3704Properties::IEPEValues[0],
+        "IEPE set. Range: " + std::string(ELM3704Properties::IEPEStrings[0])
+    );
 }
 
 
 // Write strain gauge full bridge subtype options
 void ELM3704::writeStrainGaugeFBSubTypeOptions(unsigned int channel)
 {
-    static const char *strings[6] = {
-        "4 wire 2mV/V",
-        "4 wire 4mV/V",
-        "4 wire 32mV/V",
-        "6 wire 2mV/V",
-        "6 wire 4mV/V",
-        "6 wire 32mV/V",
-    };
-    // Map values based to the corresponding 0x80n01:01 interface value
-    static int values[6] = { 259, 261, 268, 291, 293, 300 };
-    static int severities[6] = { 0, 0, 0, 0, 0, 0 };
     // Update strings and values
-    doCallbacksEnum((char **)strings, values, severities, 6, measurementSubType[channel], 0);
+    doCallbacksEnum(
+        (char **)ELM3704Properties::StrainGaugeFBStrings,
+        ELM3704Properties::StrainGaugeFBValues,
+        ELM3704Properties::severities,
+        6,
+        measurementSubType[channel],
+        0
+    );
     // Set interface to first valid subtype
-    setFirstSubTypeAfterTypeChanged(channel, values[0], "FB strain gauge set: " + std::string(strings[0]));
+    setFirstSubTypeAfterTypeChanged(
+        channel,
+        ELM3704Properties::StrainGaugeFBValues[0],
+        "Strain gauge FB set. Type: " + std::string(ELM3704Properties::StrainGaugeFBStrings[0])
+    );
 }
 
 
 // Write strain gauge half bridge subtype options
 void ELM3704::writeStrainGaugeHBSubTypeOptions(unsigned int channel)
 {
-    static const char *strings[4] = {
-        "3 wire 2mV/V",
-        "3 wire 16mV/V",
-        "5 wire 2mV/V",
-        "5 wire 16mV/V",
-    };
-    // Map values based to the corresponding 0x80n01:01 interface value
-    static int values[4] = { 323, 329, 355, 361 };
-    static int severities[4] = { 0, 0, 0, 0 };
     // Update strings and values
-    doCallbacksEnum((char **)strings, values, severities, 4, measurementSubType[channel], 0);
+    doCallbacksEnum(
+        (char **)ELM3704Properties::StrainGaugeHBStrings,
+        ELM3704Properties::StrainGaugeHBValues,
+        ELM3704Properties::severities,
+        4,
+        measurementSubType[channel],
+        0
+    );
     // Set interface to first valid subtype
-    setFirstSubTypeAfterTypeChanged(channel, values[0], "HB strain gauge set: " + std::string(strings[0]));
+    setFirstSubTypeAfterTypeChanged(
+        channel,
+        ELM3704Properties::StrainGaugeHBValues[0],
+        "Strain gauge HB set. Type: " + std::string(ELM3704Properties::StrainGaugeHBStrings[0])
+    );
 }
 
 
 // Write strain gauge quarter bridge 2 wire subtype options
 void ELM3704::writeStrainGaugeQB2WireSubTypeOptions(unsigned int channel)
 {
-    static const char *strings[8] = {
-        "120R 2mV/V comp",
-        "120R 4mV/V comp",
-        "120R 8mV/V",
-        "120R 32mV/V",
-        "350R 2mV/V comp",
-        "350R 4mV/V comp",
-        "350R 8mV/V",
-        "350R 32mV/V",
-    };
-    // Map values based to the corresponding 0x80n01:01 interface value
-    static int values[8] = { 388, 390, 391, 396, 452, 454, 455, 460 };
-    static int severities[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     // Update strings and values
-    doCallbacksEnum((char **)strings, values, severities, 8, measurementSubType[channel], 0);
+    doCallbacksEnum(
+        (char **)ELM3704Properties::StrainGaugeQB2WStrings,
+        ELM3704Properties::StrainGaugeQB2WValues,
+        ELM3704Properties::severities,
+        8,
+        measurementSubType[channel],
+        0
+    );
     // Set interface to first valid subtype
-    setFirstSubTypeAfterTypeChanged(channel, values[0], "QB 2wire strain gauge set: " + std::string(strings[0])); 
+    setFirstSubTypeAfterTypeChanged(
+        channel,
+        ELM3704Properties::StrainGaugeQB2WValues[0],
+        "Strain gauge QB 2wire set. Type: " + std::string(ELM3704Properties::StrainGaugeQB2WStrings[0])
+    );
 }
 
 
 // Write strain gauge quarter bridge 3 wire subtype options
 void ELM3704::writeStrainGaugeQB3WireSubTypeOptions(unsigned int channel)
 {
-    static const char *strings[8] = {
-        "120R 2mV/V comp",
-        "120R 4mV/V comp",
-        "120R 8mV/V",
-        "120R 32mV/V",
-        "350R 2mV/V comp",
-        "350R 4mV/V comp",
-        "350R 8mV/V",
-        "350R 32mV/V",
-    };
-    // Map values based to the corresponding 0x80n01:01 interface value
-    static int values[8] = { 420, 422, 423, 428, 484, 486, 487, 492 };
-    static int severities[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
     // Update strings and values
-    doCallbacksEnum((char **)strings, values, severities, 8, measurementSubType[channel], 0);
+    doCallbacksEnum(
+        (char **)ELM3704Properties::StrainGaugeQB3WStrings,
+        ELM3704Properties::StrainGaugeQB3WValues,
+        ELM3704Properties::severities,
+        8,
+        measurementSubType[channel],
+        0
+    );
     // Set interface to first valid subtype
-    setFirstSubTypeAfterTypeChanged(channel, values[0], "QB 3wire strain gauge set: " + std::string(strings[0]));
+    setFirstSubTypeAfterTypeChanged(
+        channel,
+        ELM3704Properties::StrainGaugeQB3WValues[0],
+        "Strain gauge QB 2wire set. Type: " + std::string(ELM3704Properties::StrainGaugeQB3WStrings[0])
+    );
 }
 
 
 // Write strain gauge quarter bridge 3 wire subtype options
 void ELM3704::writeRTDSubTypeOptions(unsigned int channel)
 {
-    static const char *strings[15] = {
-        "2 wire 5k",
-        "3 wire 5k",
-        "4 wire 5k",
-        "2 wire 2k",
-        "3 wire 2k",
-        "4 wire 2k",
-        "2 wire 500R",
-        "3 wire 500R",
-        "4 wire 500R",
-        "2 wire 200R",
-        "3 wire 200R",
-        "4 wire 200R",
-        "2 wire 50R",
-        "3 wire 50R",
-        "4 wire 50R",
-    };
-    // Map values based to the corresponding 0x80n01:01 interface value
-    static int values[15] = { 785, 786, 787, 800, 801, 802, 821, 822, 823, 830, 831, 832, 848, 849, 850 };
-    static int severities[15] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     // Update strings and values
-    doCallbacksEnum((char **)strings, values, severities, 15, measurementSubType[channel], 0);
+    doCallbacksEnum(
+        (char **)ELM3704Properties::RTDStrings,
+        ELM3704Properties::RTDValues,
+        ELM3704Properties::severities,
+        8,
+        measurementSubType[channel],
+        0
+    );
     // Set interface to first valid subtype
-    setFirstSubTypeAfterTypeChanged(channel, values[0], "RTD set: " + std::string(strings[0]));
+    setFirstSubTypeAfterTypeChanged(
+        channel,
+        ELM3704Properties::RTDValues[0],
+        "RTD set. Type: " + std::string(ELM3704Properties::RTDStrings[0])
+    );
 }
 
 

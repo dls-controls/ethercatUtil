@@ -11,6 +11,7 @@
 #ifndef ELM3704_H
 #define ELM3704_H
 
+#include <thread>
 
 #include "asynPortDriver.h"
 #include "SdoPortClient.h"
@@ -56,6 +57,8 @@ protected:
     };
 
 private:
+    // Method to initialise values
+    void initialiseValues();
 
     // Generic method to write a single N/A option to MBBI/MBBO record via asynParameter
     void writeNAOption(int param);
@@ -124,6 +127,9 @@ private:
 
     // asynPortClient to talk to the SDO port when setting channel parameters
     SdoPortClient sdoPortClient;
+
+    // Initialise values thread
+    std::thread initialiseThread;
 
 };
 
