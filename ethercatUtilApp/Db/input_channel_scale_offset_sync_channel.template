@@ -1,0 +1,25 @@
+#==============================================================================
+# Ethercat Input Channel Scale and Offset sync channel template
+#
+# Adds additional links to the sequencer record for synchronising multiple
+# PVs. This must have already been created.
+#
+# The only real use case has 2 instances of the scale plugin so hard-code the
+# links to 3 and 4.
+#
+# Macros
+# % macro, P,                PV prefix
+# % macro, R,                PV suffix
+# % macro, CHANNEL,          Channel number
+# % macro, OUTPUT_SCALE_PV,  PV to copy scale value to
+# % macro, OUTPUT_OFFSET_PV, PV to copy offset value to
+#
+#==============================================================================
+
+record(seq, "$(P):$(R):CH$(CHANNEL):SCALE:SYNC")
+{
+    field(DOL3, "$(P):$(R):CH$(CHANNEL):SCALE CP")
+    field(DOL4, "$(P):$(R):CH$(CHANNEL):OFFSET CP")
+    field(LNK3, "$(OUTPUT_SCALE_PV)")
+    field(LNK4, "$(OUTPUT_OFFSET_PV)")
+}
