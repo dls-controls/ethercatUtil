@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_.
 
+`0-4 <../../compare/0-3...0-4>`_ - 2022-04-01
+---------------------------------------------
+
+Changed:
+
+- Refactored ELM3704 properties into separate class
+- Started working on getting ELM3704 state at IOC startup
+
+Fixed:
+
+- Bug with InputChannelScalePluginSync where multiple instances of the record would overwrite
+  each other.
+
 `0-3 <../../compare/0-2...0-3>`_ - 2022-03-23
 ---------------------------------------------
 
