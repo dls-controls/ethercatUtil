@@ -177,7 +177,7 @@ void ELM3704::writeVoltageSubTypeOptions(unsigned int channel)
         (char **)ELM3704Properties::voltageStrings,
         ELM3704Properties::voltageValues,
         ELM3704Properties::severities,
-        13,
+        ELM3704Properties::numVoltageOptions,
         measurementSubType[channel],
         0
     );
@@ -198,7 +198,7 @@ void ELM3704::writeCurrentSubTypeOptions(unsigned int channel)
         (char **)ELM3704Properties::currentStrings,
         ELM3704Properties::currentValues,
         ELM3704Properties::severities,
-        4,
+        ELM3704Properties::numCurrentOptions,
         measurementSubType[channel],
         0
     );
@@ -219,7 +219,7 @@ void ELM3704::writePotentiometerSubTypeOptions(unsigned int channel)
         (char **)ELM3704Properties::potStrings,
         ELM3704Properties::potValues,
         ELM3704Properties::severities,
-        2,
+        ELM3704Properties::numPotOptions,
         measurementSubType[channel],
         0
     );
@@ -240,7 +240,7 @@ void ELM3704::writeThermocoupleSubTypeOptions(unsigned int channel)
         (char **)ELM3704Properties::TCStrings,
         ELM3704Properties::TCValues,
         ELM3704Properties::severities,
-        3,
+        ELM3704Properties::numTCOptions,
         measurementSubType[channel],
         0
     );
@@ -261,7 +261,7 @@ void ELM3704::writeIEPESubTypeOptions(unsigned int channel)
         (char **)ELM3704Properties::IEPEStrings,
         ELM3704Properties::IEPEValues,
         ELM3704Properties::severities,
-        5,
+        ELM3704Properties::numIEPEOptions,
         measurementSubType[channel],
         0
     );
@@ -282,7 +282,7 @@ void ELM3704::writeStrainGaugeFBSubTypeOptions(unsigned int channel)
         (char **)ELM3704Properties::StrainGaugeFBStrings,
         ELM3704Properties::StrainGaugeFBValues,
         ELM3704Properties::severities,
-        6,
+        ELM3704Properties::numStrainGaugeFBOptions,
         measurementSubType[channel],
         0
     );
@@ -303,7 +303,7 @@ void ELM3704::writeStrainGaugeHBSubTypeOptions(unsigned int channel)
         (char **)ELM3704Properties::StrainGaugeHBStrings,
         ELM3704Properties::StrainGaugeHBValues,
         ELM3704Properties::severities,
-        4,
+        ELM3704Properties::numStrainGaugeHBOptions,
         measurementSubType[channel],
         0
     );
@@ -324,7 +324,7 @@ void ELM3704::writeStrainGaugeQB2WireSubTypeOptions(unsigned int channel)
         (char **)ELM3704Properties::StrainGaugeQB2WStrings,
         ELM3704Properties::StrainGaugeQB2WValues,
         ELM3704Properties::severities,
-        8,
+        ELM3704Properties::numStrainGaugeQB2WOptions,
         measurementSubType[channel],
         0
     );
@@ -345,7 +345,7 @@ void ELM3704::writeStrainGaugeQB3WireSubTypeOptions(unsigned int channel)
         (char **)ELM3704Properties::StrainGaugeQB3WStrings,
         ELM3704Properties::StrainGaugeQB3WValues,
         ELM3704Properties::severities,
-        8,
+        ELM3704Properties::numStrainGaugeQB3WOptions,
         measurementSubType[channel],
         0
     );
@@ -366,7 +366,7 @@ void ELM3704::writeRTDSubTypeOptions(unsigned int channel)
         (char **)ELM3704Properties::RTDStrings,
         ELM3704Properties::RTDValues,
         ELM3704Properties::severities,
-        8,
+        ELM3704Properties::numRTDOptions,
         measurementSubType[channel],
         0
     );
@@ -390,40 +390,30 @@ void ELM3704::writeNASensorSupplyOption(unsigned int channel)
 // Write the sensor supply options for strain gauge measurements
 void ELM3704::writeStrainGaugeSensorSupplyOptions(unsigned int channel)
 {
-    static const char *strings[12] = {
-        "0.0V",
-        "1.0V",
-        "1.5V",
-        "2.0V",
-        "2.5V",
-        "3.0V",
-        "3.5V",
-        "4.0V",
-        "4.5V",
-        "5.0V",
-        "Local control",
-        "External supply",
-    };
-    // Map values based to the corresponding 0x80n01:02 sensor supply value
-    static int values[12] = { 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 65534, 65535 };
-    static int severities[12] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     // Update strings and values
-    doCallbacksEnum((char **)strings, values, severities, 12, measurementSensorSupply[channel], 0);
+    doCallbacksEnum(
+        (char **)ELM3704Properties::SGSensorSupplyStrings,
+        ELM3704Properties::SGSensorSupplyValues,
+        ELM3704Properties::severities,
+        ELM3704Properties::numSGSensorSupplyOptions,
+        measurementSensorSupply[channel],
+        0
+    );
 }
 
 
 // Write the sensor supply options for IEPE measurements
 void ELM3704::writeIEPESensorySupplyOption(unsigned int channel)
 {
-    // IEPE measurement type just fixes sensory supply to local control
-    static const char *strings[1] = {
-        "Local control",
-    };
-    // Map values based to the corresponding 0x80n01:02 sensor supply value
-    static int values[1] = { 65534 };
-    static int severities[1] = { 0 };
     // Update strings and values
-    doCallbacksEnum((char **)strings, values, severities, 1, measurementSensorSupply[channel], 0);
+    doCallbacksEnum(
+        (char **)ELM3704Properties::IEPESensorSupplyStrings,
+        ELM3704Properties::IEPESensorSupplyValues,
+        ELM3704Properties::severities,
+        ELM3704Properties::numIEPESensorSupplyOptions,
+        measurementSensorSupply[channel],
+        0
+    );
 }
 
 
@@ -440,16 +430,15 @@ void ELM3704::writeNARTDElementPageOption(unsigned int channel)
 // Write the RTD page options
 void ELM3704::writeRTDElementPageOptions(unsigned int channel)
 {
-    static const char *strings[3] = {
-        "1",
-        "2",
-        "3",
-    };
-    // Map values based to the corresponding 0x80n01:02 sensor supply value
-    static int values[3] = { 1, 2, 3 };
-    static int severities[3] = { 0, 0, 0 };
     // Update strings and values
-    doCallbacksEnum((char **)strings, values, severities, 3, measurementRTDElementPage[channel], 0);
+    doCallbacksEnum(
+        (char **)ELM3704Properties::RTDElementPageStrings,
+        ELM3704Properties::RTDElementPageValues,
+        ELM3704Properties::severities,
+        ELM3704Properties::numRTDElementPageOptions,
+        measurementRTDElementPage[channel],
+        0
+    );
 }
 
 
@@ -464,53 +453,6 @@ void ELM3704::writeNARTDElementOption(unsigned int channel)
 // Write the RTD element options list
 void ELM3704::writeRTDElementOptions(unsigned int channel, unsigned int page)
 {
-    static const char *firstPageStrings[16] = {
-        "None",
-        "PT100 (-200..850C)",
-        "NI100 (-60..250C)",
-        "PT1000 (-200..850C)",
-        "PT500 (-200..850C)",
-        "PT200 (-200..850C)",
-        "NI1000 (-60..250C)",
-        "NI1000 TK5000 1.5kOhm",
-        "NI120 (-60..320C)",
-        "KT100/110/130/210/230",
-        "KT10/11/13/16/19", // Split same option across two for readable strings
-        "KTY81/82-110,120,150",
-        "KTY81-121 (-50..150C)",
-        "KTY81-122 (-50..150C)",
-        "KTY81-151 (-50..150C)",
-        "KTY81-152 (-50..150C)",
-    };
-    static const char *secondPageStrings[16] = {
-        "KTY81/82-210,220,250",
-        "KTY81-221 (-50..150C)",
-        "KTY81-222 (-50..150C)",
-        "KTY81-251 (-50..150C)",
-        "KTY81-252 (-50..150C)",
-        "KTY83-110,120,150",
-        "KTY83-121 (-50..175C)",
-        "KTY83-122 (-50..175C)",
-        "KTY83-151 (-50..175C)",
-        "KTY83-152 (-50..175C)",
-        "KTY84-130,150 (-40..300C)",
-        "KTY84-151 (-40..300C)",
-        "KTY21/23-3 (-50..150C)",
-        "KTY1x-5 (-50..150C)",
-        "KTY1x-7 (-50..150C)",
-        "KTY21/23-5 (-50..150C)",
-    };
-    static const char *thirdPageStrings[4] = {
-        "KTY21/23-7 (-50..150C)",
-        "B-Parameter equation",
-        "DIN IEC 60751 equation",
-        "Steinhart Hart equation",
-    };
-    // Map values based to the corresponding 0x80n01:14 scaler value
-    static int firstPageValues[16] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 9, 10, 11, 12, 13, 14 };
-    static int secondPageValues[16] = { 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30 };
-    static int thirdPageValues[4] = { 31, 64, 65, 66 };
-    static int severities[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     // Update strings and values
     epicsInt32 value = 0;
     std::string elementString = std::string("RTD element type changed to: ");
@@ -518,21 +460,45 @@ void ELM3704::writeRTDElementOptions(unsigned int channel, unsigned int page)
     {
         case 1:
             printf("Writing 1st page RTD element options for channel %d\n", channel);
-            value = firstPageValues[0];
-            elementString += firstPageStrings[0];
-            doCallbacksEnum((char **)firstPageStrings, firstPageValues, severities, 16, measurementRTDElement[channel], 0);
+            value = ELM3704Properties::RTDElementFirstPageValues[0];
+            elementString += ELM3704Properties::RTDElementFirstPageStrings[0];
+            // Update strings and values
+            doCallbacksEnum(
+                (char **)ELM3704Properties::RTDElementFirstPageStrings,
+                ELM3704Properties::RTDElementFirstPageValues,
+                ELM3704Properties::severities,
+                ELM3704Properties::numRTDElementFirstPageOptions,
+                measurementRTDElement[channel],
+                0
+            );
             break;
         case 2:
             printf("Writing 2nd page RTD element options for channel %d\n", channel);
-            value = secondPageValues[0];
-            elementString += secondPageStrings[0];
-            doCallbacksEnum((char **)secondPageStrings, secondPageValues, severities, 16, measurementRTDElement[channel], 0);
+            value = ELM3704Properties::RTDElementSecondPageValues[0];
+            elementString += ELM3704Properties::RTDElementSecondPageStrings[0];
+            // Update strings and values
+            doCallbacksEnum(
+                (char **)ELM3704Properties::RTDElementSecondPageStrings,
+                ELM3704Properties::RTDElementSecondPageValues,
+                ELM3704Properties::severities,
+                ELM3704Properties::numRTDElementSecondPageOptions,
+                measurementRTDElement[channel],
+                0
+            );
             break;
         case 3:
             printf("Writing 3rd page RTD element options for channel %d\n", channel);
-            value = thirdPageValues[0];
-            elementString += thirdPageStrings[0];
-            doCallbacksEnum((char **)thirdPageStrings, thirdPageValues, severities, 4, measurementRTDElement[channel], 0);
+            value = ELM3704Properties::RTDElementThirdPageValues[0];
+            elementString += ELM3704Properties::RTDElementThirdPageStrings[0];
+            // Update strings and values
+            doCallbacksEnum(
+                (char **)ELM3704Properties::RTDElementThirdPageStrings,
+                ELM3704Properties::RTDElementThirdPageValues,
+                ELM3704Properties::severities,
+                ELM3704Properties::numRTDElementThirdPageOptions,
+                measurementRTDElement[channel],
+                0
+            );
             break;
         default:
             printf("ERROR: invalid RTD element page %d for channel %d\n", page, channel);
@@ -560,15 +526,15 @@ void ELM3704::writeNATCElementPageOption(unsigned int channel)
 // Write the TC page options
 void ELM3704::writeTCElementPageOptions(unsigned int channel)
 {
-    static const char *strings[2] = {
-        "1",
-        "2",
-    };
-    // Map values based to the corresponding 0x80n01:02 sensor supply value
-    static int values[2] = { 1, 2 };
-    static int severities[2] = { 0, 0 };
     // Update strings and values
-    doCallbacksEnum((char **)strings, values, severities, 2, measurementTCElementPage[channel], 0);
+    doCallbacksEnum(
+        (char **)ELM3704Properties::TCElementPageStrings,
+        ELM3704Properties::TCElementPageValues,
+        ELM3704Properties::severities,
+        ELM3704Properties::numTCElementPageOptions,
+        measurementTCElementPage[channel],
+        0
+    );
 }
 
 
@@ -582,35 +548,6 @@ void ELM3704::writeNATCElementOption(unsigned int channel)
 // Write the TC element options list
 void ELM3704::writeTCElementOptions(unsigned int channel, unsigned int page)
 {
-    static const char *firstPageStrings[16] = {
-        "K (-270..1372C)",
-        "J (-210..1200C)",
-        "L (-50..900C)",
-        "E (-270..1000C)",
-        "T (-270..400C)",
-        "N (-270..1300C)",
-        "U (-50..600C)",
-        "B (200..1820C)",
-        "R (-50..1768C)",
-        "S (-50..1768C)",
-        "C (0..2320C)",
-        "D (0..2490C)",
-        "G (1000..2300C)",
-        "P (PLII 0..1395C)",
-        "Au/Pt (0..1000C)",
-        "Pt/Pd (0..1000C)",
-    };
-    // Note: the following settings only available from revision 0017 onwards
-    static const char *secondPageStrings[3] = {
-        "A-1 (0..2500C)",
-        "A-2 (0..1800C)",
-        "A-3 (0..1800C)",
-    };
-
-    // Map values based to the corresponding 0x80n01:14 scaler value
-    static int firstPageValues[16] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17 };
-    static int secondPageValues[3] = { 18, 19, 20 };
-    static int severities[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
     // Update strings and values
     epicsInt32 value = 0;
     std::string elementString = std::string("TC element type changed to: ");
@@ -618,15 +555,31 @@ void ELM3704::writeTCElementOptions(unsigned int channel, unsigned int page)
     {
         case 1:
             printf("Writing 1st page TC element options for channel %d\n", channel);
-            value = firstPageValues[0];
-            elementString += firstPageStrings[0];
-            doCallbacksEnum((char **)firstPageStrings, firstPageValues, severities, 16, measurementTCElement[channel], 0);
+            value = ELM3704Properties::TCElementFirstPageValues[0];
+            elementString += ELM3704Properties::TCElementFirstPageStrings[0];
+            // Update strings and values
+            doCallbacksEnum(
+                (char **)ELM3704Properties::TCElementFirstPageStrings,
+                ELM3704Properties::TCElementFirstPageValues,
+                ELM3704Properties::severities,
+                ELM3704Properties::numTCElementFirstPageOptions,
+                measurementTCElement[channel],
+                0
+            );
             break;
         case 2:
             printf("Writing 2nd page TC element options for channel %d\n", channel);
-            value = secondPageValues[0];
-            elementString += secondPageStrings[0];
-            doCallbacksEnum((char **)secondPageStrings, secondPageValues, severities, 3, measurementTCElement[channel], 0);
+            value = ELM3704Properties::TCElementSecondPageValues[0];
+            elementString += ELM3704Properties::TCElementSecondPageStrings[0];
+            // Update strings and values
+            doCallbacksEnum(
+                (char **)ELM3704Properties::TCElementSecondPageStrings,
+                ELM3704Properties::TCElementSecondPageValues,
+                ELM3704Properties::severities,
+                ELM3704Properties::numTCElementSecondPageOptions,
+                measurementTCElement[channel],
+                0
+            );
             break;
         default:
             printf("ERROR: invalid TC element page %d for channel %d\n", page, channel);
@@ -643,33 +596,30 @@ void ELM3704::writeTCElementOptions(unsigned int channel, unsigned int page)
 // Write default scaler options
 void ELM3704::writeDefaultScalerOptions(unsigned int channel)
 {
-    static const char *strings[2] = {
-        "Extended range",
-        "Legacy range",
-    };
-    // Map values based to the corresponding 0x80n01:2E scaler value
-    static int values[2] = { 0, 3 };
-    static int severities[2] = { 0, 0 };
     // Update strings and values
-    doCallbacksEnum((char **)strings, values, severities, 2, measurementScaler[channel], 0);
+    doCallbacksEnum(
+        (char **)ELM3704Properties::DefaultScalerStrings,
+        ELM3704Properties::DefaultScalerValues,
+        ELM3704Properties::severities,
+        ELM3704Properties::numDefaultScalerOptions,
+        measurementScaler[channel],
+        0
+    );
 }
 
 
 // Write scaler options when measuring a thermocouple
 void ELM3704::writeThermocoupleScalerOptions(unsigned int channel)
 {
-    static const char *strings[5] = {
-        "Extended range",
-        "Legacy range",
-        "Celsius",
-        "Kelvin",
-        "Fahrenheit",
-    };
-    // Map values based to the corresponding 0x80n01:2E scaler value
-    static int values[5] = { 0, 3, 6, 7, 8 };
-    static int severities[5] = { 0, 0, 0, 0, 0 };
     // Update strings and values
-    doCallbacksEnum((char **)strings, values, severities, 5, measurementScaler[channel], 0);
+    doCallbacksEnum(
+        (char **)ELM3704Properties::TCScalerStrings,
+        ELM3704Properties::TCScalerValues,
+        ELM3704Properties::severities,
+        ELM3704Properties::numTCScalerOptions,
+        measurementScaler[channel],
+        0
+    );
 }
 
 
@@ -1091,7 +1041,6 @@ void ELM3704::checkIfSubTypeOptionChangingBetweenTCTypes(unsigned int channel, c
        swapping between these two modes to display correct TC element options.
     */
     enum TCType { voltage=81, cjc=86, cjcrtd=87 };
-
     // Check if we are going to 80mV
     if (value == TCType::voltage)
     {
