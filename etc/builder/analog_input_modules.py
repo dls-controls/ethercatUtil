@@ -17,6 +17,28 @@ class _ELM3704ChannelTemplate(AutoSubstitution):
     TemplateFile = "ethercat_gui_ELM3704_channel.template"
 
 
+#==============================================================================
+# Module templates
+#==============================================================================
+
+
+class EL3104(AnalogInputModule):
+
+    def __init__(self, name, slave, P, R, SCAN="1 second"):
+        self.__super.__init__(
+            name,
+            slave,
+            P,
+            R,
+            value_entry="AIStandardChannel{ch}.Value",
+            measurement_type="Analog input",
+            measurement_subtype="+/-10V",
+            SCAN=SCAN
+        )
+
+    ArgInfo = makeArgInfo(__init__, **base_arginfo_args)
+
+
 class ELM3704(AnalogInputModule):
     ''' GUI for ELM3704 multi-purpose analog input module '''
 
