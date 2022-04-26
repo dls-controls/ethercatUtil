@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on `Keep a Changelog <https://keepachangelog.com/en/1.0.0/>`_.
 
+`0-5 <../../compare/0-4...0-5>`_ - 2022-04-13
+---------------------------------------------
+
+Added:
+
+- EL3104 analogue input module
+
 `0-4 <../../compare/0-3...0-4>`_ - 2022-04-01
 ---------------------------------------------
 
